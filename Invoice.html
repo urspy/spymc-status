@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpyMc Invoice</title>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Base colors */
+            --bg-primary: #0a0a12;
+            --bg-secondary: #12121d;
+            --bg-tertiary: #1a1a2a;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-tertiary: rgba(255, 255, 255, 0.6);
+            --accent-primary: #6c5ce7;
+            --accent-secondary: #a29bfe;
+            --accent-tertiary: #fd79a8;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #d63031;
+            --info: #0984e3;
+            
+            /* Glass effect */
+            --glass-bg: rgba(30, 30, 50, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-highlight: rgba(255, 255, 255, 0.05);
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --glow-primary: 0 0 20px rgba(108, 92, 231, 0.5);
+            --glow-secondary: 0 0 20px rgba(162, 155, 254, 0.3);
+            
+            /* Transitions */
+            --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-medium: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Theme variables */
+            --theme-primary: var(--accent-primary);
+            --theme-secondary: var(--accent-secondary);
+            --theme-gradient: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 40px 20px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(108, 92, 231, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 90% 80%, rgba(253, 121, 168, 0.1) 0%, transparent 25%);
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .logo {
+            height: 80px;
+            margin: 0 auto;
+            display: block;
+            filter: drop-shadow(0 0 15px var(--theme-primary));
+            transition: var(--transition-medium);
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 20px var(--theme-primary));
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            text-align: center;
+            font-size: 2.5rem;
+            background: var(--theme-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        /* Form styles */
+        .form-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg);
+            max-width: 800px;
+            margin: 0 auto;
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition-fast);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.3);
+        }
+
+        /* Rank cards */
+        .ranks-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .rank-card {
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+            transition: var(--transition-medium);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rank-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--theme-gradient);
+            opacity: 0;
+            transition: var(--transition-medium);
+            z-index: -1;
+        }
+
+        .rank-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .rank-card.selected {
+            border-color: var(--accent-primary);
+            box-shadow: var(--glow-primary);
+        }
+
+        .rank-card.selected::before {
+            opacity: 0.1;
+        }
+
+        .rank-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .rank-price {
+            font-size: 1.2rem;
+            color: var(--accent-secondary);
+            margin-bottom: 15px;
+        }
+
+        .rank-duration {
+            font-size: 0.9rem;
+            color: var(--accent-tertiary);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .rank-features {
+            list-style: none;
+        }
+
+        .rank-features li {
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rank-features li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Discount input */
+        .discount-container {
+            margin-top: 20px;
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .discount-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .discount-input {
+            flex: 1;
+        }
+
+        .apply-discount {
+            padding: 12px 20px;
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-fast);
+        }
+
+        .apply-discount:hover {
+            background: var(--accent-secondary);
+        }
+
+        /* Invoice preview */
+        .invoice-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg);
+            max-width: 800px;
+            margin: 0 auto;
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .invoice-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            background: var(--theme-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .invoice-logo {
+            height: 60px;
+        }
+
+        .invoice-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .invoice-number {
+            color: var(--text-secondary);
+        }
+
+        .invoice-date {
+            color: var(--text-secondary);
+        }
+
+        .invoice-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .invoice-from, .invoice-to {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .invoice-section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--accent-secondary);
+        }
+
+        .invoice-text {
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+        }
+
+        .invoice-table th {
+            text-align: left;
+            padding: 12px 15px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .invoice-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+        }
+
+        .invoice-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .discount-row {
+            color: var(--danger);
+        }
+
+        .invoice-total {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .total-box {
+            background: var(--bg-tertiary);
+            padding: 20px;
+            border-radius: 12px;
+            width: 300px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .total-label {
+            color: var(--text-secondary);
+        }
+
+        .total-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .grand-total {
+            font-size: 1.2rem;
+            color: var(--accent-secondary);
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .expiry-date {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 184, 148, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 184, 148, 0.3);
+            text-align: center;
+        }
+
+        .expiry-label {
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .expiry-value {
+            color: var(--success);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Buttons */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition-medium);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            cursor: pointer;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--theme-gradient);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md), var(--glow-primary);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-tertiary));
+            opacity: 0;
+            transition: var(--transition-medium);
+            z-index: -1;
+        }
+
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--glass-highlight);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .form-container, .invoice-container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .invoice-title {
+                font-size: 1.5rem;
+            }
+            
+            .invoice-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .invoice-logo {
+                height: 50px;
+            }
+            
+            .btn {
+                padding: 14px 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .rank-name {
+                font-size: 1.3rem;
+            }
+            
+            .rank-price {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(108, 92, 231, 0.5);
+            animation: float linear infinite;
+            pointer-events: none;
+            filter: blur(1px);
+        }
+
+        .particle:nth-child(3n) {
+            background: rgba(253, 121, 168, 0.5);
+        }
+
+        .particle:nth-child(5n) {
+            background: rgba(162, 155, 254, 0.5);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-1200px) translateX(200px) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles background -->
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <!-- Logo -->
+        <img src="https://i.ibb.co/tMF05rbH/image69.png" alt="SpyMC" class="logo">
+        
+        <h1>Rank Purchase Invoice</h1>
+        <p class="subtitle">Select your desired rank and generate a professional invoice</p>
+        
+        <!-- Form -->
+        <div class="form-container" id="formContainer">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="username">Minecraft Username</label>
+                    <input type="text" id="username" placeholder="Enter your Minecraft username">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="Enter your email">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="discord">Discord Username</label>
+                    <input type="text" id="discord" placeholder="Your Discord username#0000">
+                </div>
+                <div class="form-group">
+                    <label for="payment">Payment Method</label>
+                    <select id="payment">
+                        <option value="PayPal">PayPal</option>
+                        <option value="Stripe">Credit/Debit Card</option>
+                        <option value="Razorpay">Razorpay (India)</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+            
+            <label>Select Rank (1 Month Duration)</label>
+            <div class="ranks-container">
+                <div class="rank-card" data-rank="Aurora" data-price-usd="0.99" data-price-inr="225">
+                    <h3 class="rank-name">Aurora</h3>
+                    <div class="rank-price">$0.99 / ₹225</div>
+                    <div class="rank-duration">1 Month Access</div>
+                    <ul class="rank-features">
+                        <li>Exclusive Aurora tag</li>
+                        <li>3 homes</li>
+                        <li>Access to /hat</li>
+                        <li>Particle effects</li>
+                    </ul>
+                </div>
+                
+                <div class="rank-card" data-rank="Eternity" data-price-usd="1.99" data-price-inr="269">
+                    <h3 class="rank-name">Eternity</h3>
+                    <div class="rank-price">$1.99 / ₹269</div>
+                    <div class="rank-duration">1 Month Access</div>
+                    <ul class="rank-features">
+                        <li>Exclusive Eternity tag</li>
+                        <li>5 homes</li>
+                        <li>Access to /hat and /fly</li>
+                        <li>Particle effects</li>
+                        <li>Custom join message</li>
+                    </ul>
+                </div>
+                
+                <div class="rank-card" data-rank="Radiant" data-price-usd="2.99" data-price-inr="313">
+                    <h3 class="rank-name">Radiant</h3>
+                    <div class="rank-price">$2.99 / ₹313</div>
+                    <div class="rank-duration">1 Month Access</div>
+                    <ul class="rank-features">
+                        <li>Exclusive Radiant tag</li>
+                        <li>7 homes</li>
+                        <li>Access to /hat, /fly, /enderchest</li>
+                        <li>Premium particle effects</li>
+                        <li>Custom join message</li>
+                        <li>Nickname customization</li>
+                    </ul>
+                </div>
+                
+                <div class="rank-card" data-rank="Solstice" data-price-usd="4.99" data-price-inr="451">
+                    <h3 class="rank-name">Solstice</h3>
+                    <div class="rank-price">$4.99 / ₹451</div>
+                    <div class="rank-duration">1 Month Access</div>
+                    <ul class="rank-features">
+                        <li>Exclusive Solstice tag</li>
+                        <li>10 homes</li>
+                        <li>All Radiant perks</li>
+                        <li>Access to /workbench</li>
+                        <li>Exclusive cosmetics</li>
+                        <li>Priority support</li>
+                    </ul>
+                </div>
+                
+                <div class="rank-card" data-rank="Celestial" data-price-usd="3.99" data-price-inr="363">
+                    <h3 class="rank-name">Celestial</h3>
+                    <div class="rank-price">$3.99 / ₹363</div>
+                    <div class="rank-duration">1 Month Access</div>
+                    <ul class="rank-features">
+                        <li>Exclusive Celestial tag</li>
+                        <li>8 homes</li>
+                        <li>All Radiant perks</li>
+                        <li>Special cosmic effects</li>
+                        <li>Exclusive pet skins</li>
+                        <li>Monthly rewards</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Discount section -->
+            <div class="discount-container">
+                <label for="discount">Discount Code (Optional)</label>
+                <div class="discount-row">
+                    <input type="text" id="discount" placeholder="Enter discount code" class="discount-input">
+                    <button class="apply-discount" id="applyDiscountBtn">Apply</button>
+                </div>
+                <div id="discountMessage" style="margin-top: 10px; color: var(--accent-secondary); display: none;"></div>
+            </div>
+            
+            <div class="btn-container">
+                <button class="btn btn-primary" id="generateBtn">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>Generate Invoice</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Invoice Preview -->
+        <div class="invoice-container" id="invoiceContainer" style="display: none;">
+            <div class="invoice-header">
+                <div>
+                    <h2 class="invoice-title">INVOICE</h2>
+                    <div class="invoice-number">Invoice #SPY-<span id="invoice-number">0000</span></div>
+                </div>
+                <img src="https://i.ibb.co/tMF05rbH/image69.png" alt="SpyMC" class="invoice-logo">
+            </div>
+            
+            <div class="invoice-meta">
+                <div class="invoice-date" id="invoice-date">Date: Loading...</div>
+                <div class="invoice-date" id="invoice-time">Time: Loading...</div>
+            </div>
+            
+            <div class="invoice-details">
+                <div class="invoice-from">
+                    <h3 class="invoice-section-title">From</h3>
+                    <p class="invoice-text"><strong>SpyMC Network</strong></p>
+                    <p class="invoice-text">support@spymc.xyz</p>
+                    <p class="invoice-text">spymc.xyz</p>
+                </div>
+                
+                <div class="invoice-to">
+                    <h3 class="invoice-section-title">To</h3>
+                    <p class="invoice-text" id="invoice-username"><strong>Minecraft Username</strong></p>
+                    <p class="invoice-text" id="invoice-email">Email Address</p>
+                    <p class="invoice-text" id="invoice-discord">Discord Username</p>
+                </div>
+            </div>
+            
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Price (USD)</th>
+                        <th>Price (INR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="invoice-rank">Rank Name (1 Month)</td>
+                        <td id="invoice-price-usd">$0.00</td>
+                        <td id="invoice-price-inr">₹0</td>
+                    </tr>
+                    <tr id="discount-row" style="display: none;">
+                        <td>Discount <span id="discount-percentage">0%</span></td>
+                        <td id="discount-amount-usd">-$0.00</td>
+                        <td id="discount-amount-inr">-₹0</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="invoice-total">
+                <div class="total-box">
+                    <div class="total-row">
+                        <span class="total-label">Subtotal:</span>
+                        <span class="total-value" id="invoice-subtotal-usd">$0.00</span>
+                    </div>
+                    <div class="total-row" id="discount-total-row" style="display: none;">
+                        <span class="total-label">Discount:</span>
+                        <span class="total-value" id="invoice-discount-usd">-$0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <span class="total-label">Tax (0%):</span>
+                        <span class="total-value">$0.00</span>
+                    </div>
+                    <div class="total-row grand-total">
+                        <span class="total-label">Total:</span>
+                        <span class="total-value" id="invoice-total-usd">$0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <span class="total-label">Total (INR):</span>
+                        <span class="total-value" id="invoice-total-inr">₹0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="expiry-date">
+                <div class="expiry-label">Rank Expiry Date:</div>
+                <div class="expiry-value" id="expiry-date">Calculating...</div>
+            </div>
+            
+            <div class="invoice-text" style="margin-top: 30px; text-align: center;">
+                <p>Thank you for supporting SpyMC! Your rank will be activated within 24 hours after payment.</p>
+                <p>Payment Method: <span id="invoice-payment">PayPal</span></p>
+            </div>
+            
+            <div class="btn-container">
+                <button class="btn btn-primary" id="downloadBtn">
+                    <i class="fas fa-download"></i>
+                    <span>Download Invoice</span>
+                </button>
+                <button class="btn btn-secondary" id="newInvoiceBtn">
+                    <i class="fas fa-plus"></i>
+                    <span>Create New Invoice</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize particles
+        function initParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = window.innerWidth < 768 ? 30 : 50;
+            
+            particlesContainer.innerHTML = '';
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 6 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                const left = Math.min(90, Math.random() * 100);
+                const top = Math.min(90, Math.random() * 100);
+                particle.style.left = `${left}%`;
+                particle.style.top = `${top}%`;
+                
+                const duration = Math.random() * 20 + 10;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Update date and time in real-time
+        function updateDateTime() {
+            const now = new Date();
+            
+            // Format date
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = now.toLocaleDateString('en-US', options);
+            document.getElementById('invoice-date').textContent = `Date: ${formattedDate}`;
+            
+            // Format time
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            const formattedTime = now.toLocaleTimeString('en-US', timeOptions);
+            document.getElementById('invoice-time').textContent = `Time: ${formattedTime}`;
+            
+            // Generate a simple invoice number
+            const invoiceNumber = now.getFullYear().toString().slice(-2) + 
+                                (now.getMonth() + 1).toString().padStart(2, '0') + 
+                                now.getDate().toString().padStart(2, '0') + 
+                                now.getHours().toString().padStart(2, '0') + 
+                                now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('invoice-number').textContent = invoiceNumber;
+            
+            // Calculate expiry date (1 month from now)
+            const expiryDate = new Date(now);
+            expiryDate.setMonth(expiryDate.getMonth() + 1);
+            const formattedExpiry = expiryDate.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            document.getElementById('expiry-date').textContent = formattedExpiry;
+        }
+
+        // Animate elements on load
+        function animateElements() {
+            anime({
+                targets: '#formContainer',
+                translateY: [20, 0],
+                opacity: [0, 1],
+                duration: 800,
+                easing: 'easeOutExpo'
+            });
+            
+            anime({
+                targets: '.rank-card',
+                translateY: [20, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(100),
+                duration: 800,
+                easing: 'easeOutExpo'
+            });
+        }
+
+        // Rank selection
+        function setupRankSelection() {
+            const rankCards = document.querySelectorAll('.rank-card');
+            
+            rankCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    // Remove selected class from all cards
+                    rankCards.forEach(c => c.classList.remove('selected'));
+                    
+                    // Add selected class to clicked card
+                    card.classList.add('selected');
+                    
+                    // Animate selection
+                    anime({
+                        targets: card,
+                        scale: [0.95, 1],
+                        duration: 500,
+                        easing: 'easeOutElastic(1, .5)'
+                    });
+                });
+            });
+        }
+
+        // Discount codes (simple implementation)
+        const discountCodes = {
+            "SPY10": 10,
+            "10": 10,
+            "VIP10": 20,
+            "spy10": 25
+        };
+
+        // Apply discount
+        function setupDiscountButton() {
+            const applyBtn = document.getElementById('applyDiscountBtn');
+            const discountInput = document.getElementById('discount');
+            const discountMessage = document.getElementById('discountMessage');
+            
+            applyBtn.addEventListener('click', () => {
+                const code = discountInput.value.trim().toUpperCase();
+                
+                if (!code) {
+                    discountMessage.textContent = "Please enter a discount code";
+                    discountMessage.style.color = "var(--warning)";
+                    discountMessage.style.display = "block";
+                    return;
+                }
+                
+                if (discountCodes[code]) {
+                    discountMessage.textContent = `Discount applied! ${discountCodes[code]}% off`;
+                    discountMessage.style.color = "var(--success)";
+                    discountMessage.style.display = "block";
+                    
+                    // Store discount in localStorage so it persists when generating invoice
+                    localStorage.setItem('currentDiscount', discountCodes[code]);
+                    localStorage.setItem('currentDiscountCode', code);
+                } else {
+                    discountMessage.textContent = "Invalid discount code";
+                    discountMessage.style.color = "var(--danger)";
+                    discountMessage.style.display = "block";
+                    localStorage.removeItem('currentDiscount');
+                    localStorage.removeItem('currentDiscountCode');
+                }
+            });
+        }
+
+        // Generate invoice
+        function setupGenerateButton() {
+            const generateBtn = document.getElementById('generateBtn');
+            const formContainer = document.getElementById('formContainer');
+            const invoiceContainer = document.getElementById('invoiceContainer');
+            
+            generateBtn.addEventListener('click', () => {
+                // Validate form
+                const username = document.getElementById('username').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const discord = document.getElementById('discord').value.trim();
+                const payment = document.getElementById('payment').value;
+                const selectedRank = document.querySelector('.rank-card.selected');
+                
+                if (!username) {
+                    alert('Please enter your Minecraft username');
+                    return;
+                }
+                
+                if (!email) {
+                    alert('Please enter your email address');
+                    return;
+                }
+                
+                if (!selectedRank) {
+                    alert('Please select a rank');
+                    return;
+                }
+                
+                // Get rank details
+                const rankName = selectedRank.dataset.rank;
+                let priceUSD = parseFloat(selectedRank.dataset.priceUsd);
+                let priceINR = parseFloat(selectedRank.dataset.priceInr);
+                
+                // Check for discount
+                const discountPercentage = localStorage.getItem('currentDiscount') || 0;
+                const discountCode = localStorage.getItem('currentDiscountCode') || '';
+                
+                // Calculate discounted prices
+                let discountAmountUSD = 0;
+                let discountAmountINR = 0;
+                let finalPriceUSD = priceUSD;
+                let finalPriceINR = priceINR;
+                
+                if (discountPercentage > 0) {
+                    discountAmountUSD = (priceUSD * discountPercentage / 100).toFixed(2);
+                    discountAmountINR = (priceINR * discountPercentage / 100).toFixed(0);
+                    finalPriceUSD = (priceUSD - discountAmountUSD).toFixed(2);
+                    finalPriceINR = (priceINR - discountAmountINR).toFixed(0);
+                    
+                    // Show discount in invoice
+                    document.getElementById('discount-row').style.display = 'table-row';
+                    document.getElementById('discount-total-row').style.display = 'flex';
+                    document.getElementById('discount-percentage').textContent = `${discountPercentage}% (${discountCode})`;
+                    document.getElementById('discount-amount-usd').textContent = `-$${discountAmountUSD}`;
+                    document.getElementById('discount-amount-inr').textContent = `-₹${discountAmountINR}`;
+                    document.getElementById('invoice-discount-usd').textContent = `-$${discountAmountUSD}`;
+                } else {
+                    document.getElementById('discount-row').style.display = 'none';
+                    document.getElementById('discount-total-row').style.display = 'none';
+                }
+                
+                // Update invoice
+                document.getElementById('invoice-username').textContent = username;
+                document.getElementById('invoice-email').textContent = email;
+                document.getElementById('invoice-discord').textContent = discord || 'Not provided';
+                document.getElementById('invoice-rank').textContent = `${rankName} Rank (1 Month)`;
+                document.getElementById('invoice-price-usd').textContent = `$${priceUSD}`;
+                document.getElementById('invoice-price-inr').textContent = `₹${priceINR}`;
+                document.getElementById('invoice-subtotal-usd').textContent = `$${priceUSD}`;
+                document.getElementById('invoice-total-usd').textContent = `$${finalPriceUSD}`;
+                document.getElementById('invoice-total-inr').textContent = `₹${finalPriceINR}`;
+                document.getElementById('invoice-payment').textContent = payment;
+                
+                // Update date/time
+                updateDateTime();
+                // Update time every second
+                setInterval(updateDateTime, 1000);
+                
+                // Show invoice
+                formContainer.style.display = 'none';
+                invoiceContainer.style.display = 'block';
+                
+                // Animate invoice appearance
+                anime({
+                    targets: invoiceContainer,
+                    translateY: [20, 0],
+                    opacity: [0, 1],
+                    duration: 800,
+                    easing: 'easeOutExpo'
+                });
+            });
+        }
+
+        // Download invoice
+        function setupDownloadButton() {
+            const downloadBtn = document.getElementById('downloadBtn');
+            const invoiceContainer = document.getElementById('invoiceContainer');
+            
+            downloadBtn.addEventListener('click', () => {
+                // Add watermark
+                const watermark = document.createElement('div');
+                watermark.style.position = 'absolute';
+                watermark.style.bottom = '20px';
+                watermark.style.right = '20px';
+                watermark.style.color = 'rgba(255, 255, 255, 0.3)';
+                watermark.style.fontSize = '12px';
+                watermark.textContent = 'Generated by SpyMC Invoice Generator';
+                invoiceContainer.appendChild(watermark);
+                
+                // Animate button click
+                anime({
+                    targets: downloadBtn,
+                    scale: [1, 0.9, 1],
+                    duration: 600,
+                    easing: 'easeOutElastic(1, .5)'
+                });
+                
+                // Generate image
+                html2canvas(invoiceContainer, {
+                    backgroundColor: null,
+                    scale: 2,
+                    logging: false,
+                    allowTaint: true,
+                    useCORS: true
+                }).then(canvas => {
+                    // Remove watermark
+                    invoiceContainer.removeChild(watermark);
+                    
+                    // Create download link
+                    const link = document.createElement('a');
+                    link.download = `SpyMC_Invoice_${Date.now()}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+            });
+        }
+
+        // New invoice
+        function setupNewInvoiceButton() {
+            const newInvoiceBtn = document.getElementById('newInvoiceBtn');
+            const formContainer = document.getElementById('formContainer');
+            const invoiceContainer = document.getElementById('invoiceContainer');
+            
+            newInvoiceBtn.addEventListener('click', () => {
+                // Hide invoice and show form
+                anime({
+                    targets: invoiceContainer,
+                    translateY: 20,
+                    opacity: 0,
+                    duration: 500,
+                    easing: 'easeInExpo',
+                    complete: () => {
+                        invoiceContainer.style.display = 'none';
+                        formContainer.style.display = 'block';
+                        
+                        // Animate form appearance
+                        anime({
+                            targets: formContainer,
+                            translateY: [20, 0],
+                            opacity: [0, 1],
+                            duration: 800,
+                            easing: 'easeOutExpo'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Initialize everything
+        function init() {
+            initParticles();
+            animateElements();
+            setupRankSelection();
+            setupDiscountButton();
+            setupGenerateButton();
+            setupDownloadButton();
+            setupNewInvoiceButton();
+            
+            // Add resize event listener
+            window.addEventListener('resize', initParticles);
+        }
+
+        // Start the application
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
