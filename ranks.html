@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpyMC | Server Ranks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00f0ff;
+            --primary-dark: #0066ff;
+            --secondary: #ff00aa;
+            --accent: #00ffaa;
+            --dark: #0a0a12;
+            --darker: #050508;
+            --light: #e0e0ff;
+            --card-bg: rgba(15, 15, 25, 0.9);
+            --card-border: rgba(0, 240, 255, 0.2);
+            --text-muted: rgba(200, 200, 255, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.05) 0%, transparent 25%),
+                radial-gradient(circle at 80% 70%, rgba(255, 0, 170, 0.05) 0%, transparent 25%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .logo {
+            height: 80px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px var(--primary));
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin: 30px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent);
+            font-size: 1.3rem;
+            margin: 25px 0 10px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        .rank-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .rank-section:hover {
+            border-color: rgba(0, 240, 255, 0.4);
+            box-shadow: 0 5px 15px rgba(0, 240, 255, 0.1);
+        }
+
+        .rank-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .rank-card {
+            background: rgba(0, 100, 255, 0.1);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rank-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(0, 240, 255, 0.1);
+        }
+
+        .rank-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .rank-card:hover::before {
+            left: 100%;
+        }
+
+        .rank-title {
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rank-price {
+            color: var(--accent);
+            font-weight: bold;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rank-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+
+        .rank-kills {
+            color: var(--secondary);
+            font-weight: bold;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rank-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(145deg, var(--primary), var(--primary-dark));
+            color: var(--darker);
+            border: none;
+            border-radius: 6px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .rank-btn:hover {
+            background: linear-gradient(145deg, var(--primary-dark), var(--primary));
+            color: white;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+        }
+
+        .achievement-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .achievement-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-card:hover {
+            border-color: rgba(0, 240, 255, 0.4);
+            box-shadow: 0 5px 15px rgba(0, 240, 255, 0.1);
+        }
+
+        .join-discord {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .join-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(145deg, var(--secondary), #ff0066);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .join-btn:hover {
+            background: linear-gradient(145deg, #ff0066, var(--secondary));
+            box-shadow: 0 0 20px rgba(255, 0, 170, 0.5);
+            transform: translateY(-3px);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .rank-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="https://i.ibb.co/tMF05rbH/image69.png" alt="SpyMC" class="logo">
+            <h1>SPYMC SERVER RANKS</h1>
+            <p class="subtitle">Climb the ranks and establish your legacy in the SpyMC universe</p>
+        </header>
+
+        <div class="rank-section">
+            <h2><i class="fas fa-shield-alt"></i> Administrative and Staff Ranks</h2>
+            <p>These exclusive ranks are for those who help maintain and manage the SpyMC server.</p>
+            
+            <div class="rank-grid">
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-crown"></i> Senior</div>
+                    <div class="rank-desc">Exclusively for the owner of SpyMC, granting complete control and authority over the server.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">LEARN MORE</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-star"></i> Ashu</div>
+                    <div class="rank-desc">A special rank reserved for the Co-Owner, who assists the owner in managing the server.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">LEARN MORE</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-user-shield"></i> Admin</div>
+                    <div class="rank-desc">Administrators with full permissions to oversee server operations, enforce rules, and handle technical management.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">LEARN MORE</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-gavel"></i> Mod</div>
+                    <div class="rank-desc">Moderators responsible for maintaining server order, enforcing rules, and helping players.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">LEARN MORE</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-hands-helping"></i> Helper</div>
+                    <div class="rank-desc">An entry-level staff role for providing assistance to new players, answering questions, and offering guidance.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">LEARN MORE</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="rank-section">
+            <h2><i class="fas fa-gem"></i> Paid Ranks</h2>
+            <p>Upgrade your SpyMC experience with these premium ranks.</p>
+            
+            <div class="rank-grid">
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-bullseye"></i> SNIPER</div>
+                    <div class="rank-price"><i class="fas fa-tag"></i> $5.49 / ₹451</div>
+                    <div class="rank-desc">A rank of exceptional distinction, symbolizing the highest level of prestige and recognition within SpyMC.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">GET THIS RANK</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-star"></i> CORE</div>
+                    <div class="rank-price"><i class="fas fa-tag"></i> $4.39 / ₹363</div>
+                    <div class="rank-desc">A divine rank that places players among the stars, embodying grace and power with exclusive privileges.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">GET THIS RANK</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-bolt"></i> CYBER</div>
+                    <div class="rank-price"><i class="fas fa-tag"></i> $3.84 / ₹313</div>
+                    <div class="rank-desc">A radiant presence in the game, this rank is for those who shine brightly with skill and commitment.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">GET THIS RANK</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="rank-section">
+            <h2><i class="fas fa-trophy"></i> Kill-Based Ranks</h2>
+            <p>Achieve these ranks through skill and dedication in combat.</p>
+            
+            <div class="rank-grid">
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-fire"></i> Ascended</div>
+                    <div class="rank-kills"><i class="fas fa-skull"></i> 10000 kills</div>
+                    <div class="rank-desc">Awarded to players who have triumphed over countless challenges, proving their dominance in the game.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">CLAIM RANK</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-crown"></i> Ruler</div>
+                    <div class="rank-kills"><i class="fas fa-skull"></i> 5000 kills</div>
+                    <div class="rank-desc">For players who have shown unparalleled skill and dedication, becoming protectors of the community.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">CLAIM RANK</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-shield-alt"></i> Supreme</div>
+                    <div class="rank-kills"><i class="fas fa-skull"></i> 4000 kills</div>
+                    <div class="rank-desc">Awarded to players who have triumphed over countless challenges, proving their dominance in the game.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">CLAIM RANK</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-medal"></i> God</div>
+                    <div class="rank-kills"><i class="fas fa-skull"></i> 3000 kills</div>
+                    <div class="rank-desc">A rank for those who have made a lasting and unforgettable impact in the world of SpyMC.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">CLAIM RANK</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-infinity"></i> Immortal</div>
+                    <div class="rank-kills"><i class="fas fa-skull"></i> 1000 kills</div>
+                    <div class="rank-desc">For players whose achievements and prowess are legendary, standing the test of time in SpyMC.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">CLAIM RANK</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-bookmark"></i> Legend</div>
+                    <div class="rank-kills"><i class="fas fa-skull"></i> 500 kills</div>
+                    <div class="rank-desc">Recognizing those who have hit key milestones, marking their growth and commitment within SpyMC.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">CLAIM RANK</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="rank-section">
+            <h2><i class="fas fa-certificate"></i> Special and Themed Ranks</h2>
+            <p>Unique ranks for special contributors and community members.</p>
+            
+            <div class="rank-grid">
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-rocket"></i> Booster</div>
+                    <div class="rank-desc">Given to players who support SpyMC by boosting it (usually via Discord), offering special rewards and in-game perks.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">LEARN MORE</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-video"></i> Youtuber</div>
+                    <div class="rank-desc">Reserved for content creators with 7K or more subscribers, providing special permissions and features.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">APPLY NOW</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-photo-video"></i> Media</div>
+                    <div class="rank-desc">Awarded to creators with 1K or more subscribers, offering access to special privileges for promoting SpyMC.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">APPLY NOW</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-user-astronaut"></i> Elite</div>
+                    <div class="rank-desc">A rank for special friends of SpyMC and those closely associated with the server, granting unique privileges.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">LEARN MORE</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-user-secret"></i> Spy</div>
+                    <div class="rank-desc">Given to players who join the SpyMC Discord, offering espionage-themed gameplay features and exclusive perks.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">JOIN DISCORD</a>
+                </div>
+                
+                <div class="rank-card">
+                    <div class="rank-title"><i class="fas fa-user"></i> Default</div>
+                    <div class="rank-desc">The standard rank for new players, offering basic gameplay features with the opportunity to rank up over time.</div>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">GET STARTED</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="join-discord">
+            <h2><i class="fab fa-discord"></i> Join Our Community</h2>
+            
+            <a href="https://discord.spymc.xyz" class="join-btn">Join Discord Server</a>
+        </div>
+
+        <div class="rank-section">
+            <h2><i class="fas fa-tasks"></i> Achievement System</h2>
+            <p>Complete challenges and unlock special rewards in SpyMC.</p>
+            
+            <div class="achievement-section">
+                <div class="achievement-card">
+                    <h3><i class="fas fa-crosshairs"></i> Kill Completion</h3>
+                    <p>Track your progress toward kill-based ranks and unlock special rewards for reaching milestones.</p>
+                    <a href="https://discord.spymc.xyz" class="rank-btn">CHECK YOUR KILLS</a>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 SpyMC Network. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
