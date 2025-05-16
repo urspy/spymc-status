@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpyMC Tier Manager</title>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Cyberpunk Color Scheme */
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #25253d;
+            --text-primary: #e0e0ff;
+            --text-secondary: #b8b8d8;
+            --text-tertiary: #9090b0;
+            --accent-primary: #00f0ff;
+            --accent-secondary: #7b2dff;
+            --accent-tertiary: #ff2d7b;
+            --success: #00ff88;
+            --warning: #ffcc00;
+            --danger: #ff3860;
+            --info: #00aaff;
+            
+            /* Glow effects */
+            --glow-primary: 0 0 15px rgba(0, 240, 255, 0.6);
+            --glow-secondary: 0 0 15px rgba(123, 45, 255, 0.4);
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.5);
+            
+            /* Transitions */
+            --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-medium: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Theme gradient */
+            --theme-gradient: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.08) 0%, transparent 25%),
+                radial-gradient(circle at 90% 80%, rgba(123, 45, 255, 0.08) 0%, transparent 25%);
+            background-size: cover;
+            background-attachment: fixed;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .logo {
+            height: 80px;
+            margin: 0 auto;
+            display: block;
+            filter: drop-shadow(var(--glow-primary));
+            transition: var(--transition-medium);
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 25px rgba(0, 240, 255, 0.8));
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            font-size: 2.8rem;
+            background: var(--theme-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Form styles */
+        .form-container {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: var(--shadow-lg);
+            max-width: 900px;
+            margin: 0 auto;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: var(--transition-medium);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--theme-gradient);
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.2), var(--shadow-sm);
+        }
+
+        /* Kit selection */
+        .kits-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+        }
+
+        .kit-card {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: var(--transition-medium);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .kit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(0, 240, 255, 0.3);
+        }
+
+        .kit-icon {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .kit-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 1.2rem;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+        }
+
+        /* Tier selection */
+        .tier-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.6rem;
+            margin-top: 0.8rem;
+        }
+
+        .tier-option {
+            padding: 0.5rem 0.3rem;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: var(--transition-fast);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tier-option:hover {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: rgba(0, 240, 255, 0.3);
+        }
+
+        .tier-option.selected {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-primary);
+            box-shadow: var(--glow-primary);
+            font-weight: 700;
+        }
+
+        /* Preview container */
+        .preview-container {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: var(--shadow-lg);
+            max-width: 900px;
+            margin: 0 auto;
+            transform: translateY(20px);
+            opacity: 0;
+            display: none;
+            position: relative;
+        }
+
+        .preview-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--theme-gradient);
+        }
+
+        .preview-content {
+            background: var(--bg-tertiary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            line-height: 1.8;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Buttons */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: var(--transition-medium);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            cursor: pointer;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary {
+            background: var(--theme-gradient);
+            color: var(--bg-primary);
+            font-weight: 700;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md), var(--glow-primary);
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-tertiary));
+            opacity: 0;
+            transition: var(--transition-medium);
+            z-index: -1;
+        }
+
+        .btn-primary:hover::after {
+            opacity: 1;
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(0, 240, 255, 0.3);
+        }
+
+        /* Status message */
+        .status-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            display: none;
+            font-size: 0.95rem;
+            text-align: center;
+            border: 1px solid transparent;
+        }
+
+        .success {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: rgba(0, 255, 136, 0.3);
+            color: var(--success);
+        }
+
+        .error {
+            background: rgba(255, 56, 96, 0.1);
+            border-color: rgba(255, 56, 96, 0.3);
+            color: var(--danger);
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(0, 240, 255, 0.5);
+            animation: float linear infinite;
+            pointer-events: none;
+            filter: blur(1px);
+        }
+
+        .particle:nth-child(3n) {
+            background: rgba(123, 45, 255, 0.5);
+        }
+
+        .particle:nth-child(5n) {
+            background: rgba(255, 45, 123, 0.5);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-1200px) translateX(200px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .form-container, .preview-container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .tier-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .btn {
+                padding: 0.8rem 1.5rem;
+            }
+            
+            .kits-container {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .kit-name {
+                font-size: 1.1rem;
+            }
+            
+            .tier-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles background -->
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <!-- Logo -->
+        <img src="https://i.ibb.co/tMF05rbH/image69.png" alt="SpyMC" class="logo">
+        
+        <h1>TIER ASSIGNMENT SYSTEM</h1>
+        <p class="subtitle">Assign and manage player tiers across all game kits with precision</p>
+        
+        <!-- Form -->
+        <div class="form-container" id="formContainer">
+            <div class="form-group">
+                <label for="playerName"><i class="fas fa-user" style="margin-right: 8px;"></i> Player Name</label>
+                <input type="text" id="playerName" placeholder="Enter player's username">
+            </div>
+            
+            <label style="margin-top: 1.5rem;"><i class="fas fa-layer-group" style="margin-right: 8px;"></i> Kit Tier Assignments</label>
+            <div class="kits-container">
+                <!-- Nethport Kit -->
+                <div class="kit-card">
+                    <div class="kit-icon"><i class="fas fa-network-wired"></i></div>
+                    <h3 class="kit-name">NETHPOT</h3>
+                    <div class="tier-container" data-kit="nethpot">
+                        <div class="tier-option" data-tier="HT1">HT1</div>
+                        <div class="tier-option" data-tier="LT1">LT1</div>
+                        <div class="tier-option" data-tier="HT2">HT2</div>
+                        <div class="tier-option" data-tier="LT2">LT2</div>
+                        <div class="tier-option" data-tier="HT3">HT3</div>
+                        <div class="tier-option" data-tier="LT3">LT3</div>
+                        <div class="tier-option" data-tier="HT4">HT4</div>
+                        <div class="tier-option" data-tier="LT4">LT4</div>
+                        <div class="tier-option" data-tier="HT5">HT5</div>
+                        <div class="tier-option" data-tier="LT5">LT5</div>
+                    </div>
+                </div>
+                
+                <!-- Sword Kit -->
+                <div class="kit-card">
+                    <div class="kit-icon"><i class="fas fa-sword"></i></div>
+                    <h3 class="kit-name">SWORD</h3>
+                    <div class="tier-container" data-kit="sword">
+                        <div class="tier-option" data-tier="HT1">HT1</div>
+                        <div class="tier-option" data-tier="LT1">LT1</div>
+                        <div class="tier-option" data-tier="HT2">HT2</div>
+                        <div class="tier-option" data-tier="LT2">LT2</div>
+                        <div class="tier-option" data-tier="HT3">HT3</div>
+                        <div class="tier-option" data-tier="LT3">LT3</div>
+                        <div class="tier-option" data-tier="HT4">HT4</div>
+                        <div class="tier-option" data-tier="LT4">LT4</div>
+                        <div class="tier-option" data-tier="HT5">HT5</div>
+                        <div class="tier-option" data-tier="LT5">LT5</div>
+                    </div>
+                </div>
+                
+                <!-- Crystal Kit -->
+                <div class="kit-card">
+                    <div class="kit-icon"><i class="fas fa-gem"></i></div>
+                    <h3 class="kit-name">CRYSTAL</h3>
+                    <div class="tier-container" data-kit="crystal">
+                        <div class="tier-option" data-tier="HT1">HT1</div>
+                        <div class="tier-option" data-tier="LT1">LT1</div>
+                        <div class="tier-option" data-tier="HT2">HT2</div>
+                        <div class="tier-option" data-tier="LT2">LT2</div>
+                        <div class="tier-option" data-tier="HT3">HT3</div>
+                        <div class="tier-option" data-tier="LT3">LT3</div>
+                        <div class="tier-option" data-tier="HT4">HT4</div>
+                        <div class="tier-option" data-tier="LT4">LT4</div>
+                        <div class="tier-option" data-tier="HT5">HT5</div>
+                        <div class="tier-option" data-tier="LT5">LT5</div>
+                    </div>
+                </div>
+                
+                <!-- UHC Kit -->
+                <div class="kit-card">
+                    <div class="kit-icon"><i class="fas fa-heart"></i></div>
+                    <h3 class="kit-name">UHC</h3>
+                    <div class="tier-container" data-kit="uhc">
+                        <div class="tier-option" data-tier="HT1">HT1</div>
+                        <div class="tier-option" data-tier="LT1">LT1</div>
+                        <div class="tier-option" data-tier="HT2">HT2</div>
+                        <div class="tier-option" data-tier="LT2">LT2</div>
+                        <div class="tier-option" data-tier="HT3">HT3</div>
+                        <div class="tier-option" data-tier="LT3">LT3</div>
+                        <div class="tier-option" data-tier="HT4">HT4</div>
+                        <div class="tier-option" data-tier="LT4">LT4</div>
+                        <div class="tier-option" data-tier="HT5">HT5</div>
+                        <div class="tier-option" data-tier="LT5">LT5</div>
+                    </div>
+                </div>
+                
+                <!-- Axe Kit -->
+                <div class="kit-card">
+                    <div class="kit-icon"><i class="fas fa-hatchet"></i></div>
+                    <h3 class="kit-name">AXE</h3>
+                    <div class="tier-container" data-kit="axe">
+                        <div class="tier-option" data-tier="HT1">HT1</div>
+                        <div class="tier-option" data-tier="LT1">LT1</div>
+                        <div class="tier-option" data-tier="HT2">HT2</div>
+                        <div class="tier-option" data-tier="LT2">LT2</div>
+                        <div class="tier-option" data-tier="HT3">HT3</div>
+                        <div class="tier-option" data-tier="LT3">LT3</div>
+                        <div class="tier-option" data-tier="HT4">HT4</div>
+                        <div class="tier-option" data-tier="LT4">LT4</div>
+                        <div class="tier-option" data-tier="HT5">HT5</div>
+                        <div class="tier-option" data-tier="LT5">LT5</div>
+                    </div>
+                </div>
+                
+                <!-- SMP Kit -->
+                <div class="kit-card">
+                    <div class="kit-icon"><i class="fas fa-tree"></i></div>
+                    <h3 class="kit-name">SMP</h3>
+                    <div class="tier-container" data-kit="smp">
+                        <div class="tier-option" data-tier="HT1">HT1</div>
+                        <div class="tier-option" data-tier="LT1">LT1</div>
+                        <div class="tier-option" data-tier="HT2">HT2</div>
+                        <div class="tier-option" data-tier="LT2">LT2</div>
+                        <div class="tier-option" data-tier="HT3">HT3</div>
+                        <div class="tier-option" data-tier="LT3">LT3</div>
+                        <div class="tier-option" data-tier="HT4">HT4</div>
+                        <div class="tier-option" data-tier="LT4">LT4</div>
+                        <div class="tier-option" data-tier="HT5">HT5</div>
+                        <div class="tier-option" data-tier="LT5">LT5</div>
+                    </div>
+                </div>
+                
+                <!-- Mace Kit -->
+                <div class="kit-card">
+                    <div class="kit-icon"><i class="fas fa-hammer"></i></div>
+                    <h3 class="kit-name">MACE</h3>
+                    <div class="tier-container" data-kit="mace">
+                        <div class="tier-option" data-tier="HT1">HT1</div>
+                        <div class="tier-option" data-tier="LT1">LT1</div>
+                        <div class="tier-option" data-tier="HT2">HT2</div>
+                        <div class="tier-option" data-tier="LT2">LT2</div>
+                        <div class="tier-option" data-tier="HT3">HT3</div>
+                        <div class="tier-option" data-tier="LT3">LT3</div>
+                        <div class="tier-option" data-tier="HT4">HT4</div>
+                        <div class="tier-option" data-tier="LT4">LT4</div>
+                        <div class="tier-option" data-tier="HT5">HT5</div>
+                        <div class="tier-option" data-tier="LT5">LT5</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="btn-container">
+                <button class="btn btn-primary" id="generateBtn">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Generate Tier Report</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Preview -->
+        <div class="preview-container" id="previewContainer">
+            <div class="preview-content" id="previewContent"></div>
+            
+            <div class="status-message" id="statusMessage"></div>
+            
+            <div class="btn-container">
+                <button class="btn btn-primary" id="submitBtn">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>Upload to Drive</span>
+                    <div class="spinner" id="submitSpinner"></div>
+                </button>
+                <button class="btn btn-secondary" id="editBtn">
+                    <i class="fas fa-edit"></i>
+                    <span>Edit Assignments</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Google API client -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script>
+        // API Configuration
+        const folderId = "1fvamSbNgUaT3i7apQG8AvyhvnT_HG4Oj"; // Your Google Drive folder ID
+        const CLIENT_ID = "1052141501841-hc634dapf2irlue8j6dml4m1f8qv0iuj.apps.googleusercontent.com";
+        const API_KEY = "AIzaSyBUKIGUAn0hX_YmLtdZyIMwrjzsLcfTldg";
+        const SCOPES = "https://www.googleapis.com/auth/drive.file";
+
+        let googleAuth;
+
+        // Initialize Google API
+        function initGoogleAPI() {
+            gapi.load('client:auth2', () => {
+                gapi.client.init({
+                    apiKey: API_KEY,
+                    clientId: CLIENT_ID,
+                    scope: SCOPES,
+                    discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
+                }).then(() => {
+                    googleAuth = gapi.auth2.getAuthInstance();
+                    
+                    // Listen for sign-in state changes
+                    googleAuth.isSignedIn.listen(updateSigninStatus);
+                    
+                    // Handle initial sign-in state
+                    updateSigninStatus(googleAuth.isSignedIn.get());
+                    
+                    console.log("Google API initialized");
+                }).catch(err => {
+                    console.error("Error initializing Google API", err);
+                    showError("Failed to initialize Google services");
+                });
+            });
+        }
+
+        function updateSigninStatus(isSignedIn) {
+            if (isSignedIn) {
+                console.log("User is signed in");
+            } else {
+                console.log("User is not signed in");
+            }
+        }
+
+        // Upload file to Google Drive
+        async function uploadToDrive(fileName, content) {
+            try {
+                // Ensure user is signed in
+                if (!googleAuth.isSignedIn.get()) {
+                    await googleAuth.signIn();
+                }
+
+                const fileMetadata = {
+                    name: fileName,
+                    parents: [folderId],
+                    mimeType: 'text/plain'
+                };
+
+                const media = {
+                    mimeType: 'text/plain',
+                    body: content
+                };
+
+                const response = await gapi.client.drive.files.create({
+                    resource: fileMetadata,
+                    media: media,
+                    fields: 'id,name,webViewLink'
+                });
+
+                return response.result;
+            } catch (error) {
+                console.error("Error uploading file:", error);
+                throw error;
+            }
+        }
+
+        // Initialize particles
+        function initParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = window.innerWidth < 768 ? 30 : 50;
+            
+            particlesContainer.innerHTML = '';
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 6 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                const left = Math.min(90, Math.random() * 100);
+                const top = Math.min(90, Math.random() * 100);
+                particle.style.left = `${left}%`;
+                particle.style.top = `${top}%`;
+                
+                const duration = Math.random() * 20 + 10;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Animate elements on load
+        function animateElements() {
+            anime({
+                targets: '#formContainer',
+                translateY: [20, 0],
+                opacity: [0, 1],
+                duration: 800,
+                easing: 'easeOutExpo'
+            });
+            
+            anime({
+                targets: '.kit-card',
+                translateY: [20, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(100),
+                duration: 800,
+                easing: 'easeOutExpo'
+            });
+        }
+
+        // Tier selection with optimized event delegation
+        function setupTierSelection() {
+            document.querySelectorAll('.tier-container').forEach(container => {
+                container.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('tier-option')) {
+                        // Remove selected class from all options in this container
+                        container.querySelectorAll('.tier-option').forEach(option => {
+                            option.classList.remove('selected');
+                        });
+                        
+                        // Add selected class to clicked option
+                        e.target.classList.add('selected');
+                        
+                        // Animate selection
+                        anime({
+                            targets: e.target,
+                            scale: [0.9, 1],
+                            duration: 500,
+                            easing: 'easeOutElastic(1, .5)'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Generate preview
+        function setupGenerateButton() {
+            const generateBtn = document.getElementById('generateBtn');
+            const formContainer = document.getElementById('formContainer');
+            const previewContainer = document.getElementById('previewContainer');
+            const previewContent = document.getElementById('previewContent');
+            
+            generateBtn.addEventListener('click', () => {
+                // Validate form
+                const playerName = document.getElementById('playerName').value.trim();
+                
+                if (!playerName) {
+                    showError('Please enter player name');
+                    return;
+                }
+                
+                // Check if at least one tier is selected per kit
+                let allKitsHaveTiers = true;
+                const kitTiers = {};
+                
+                document.querySelectorAll('.tier-container').forEach(container => {
+                    const kitName = container.dataset.kit;
+                    const selectedOption = container.querySelector('.tier-option.selected');
+                    
+                    if (!selectedOption) {
+                        allKitsHaveTiers = false;
+                        // Highlight the kit that's missing a tier
+                        anime({
+                            targets: container.parentElement,
+                            translateX: [-5, 5, -5, 5, 0],
+                            duration: 400,
+                            easing: 'easeInOutSine'
+                        });
+                        container.parentElement.style.boxShadow = '0 0 0 2px var(--danger)';
+                        setTimeout(() => {
+                            container.parentElement.style.boxShadow = '';
+                        }, 2000);
+                    } else {
+                        kitTiers[kitName.toUpperCase()] = selectedOption.dataset.tier;
+                    }
+                });
+                
+                if (!allKitsHaveTiers) {
+                    showError('Please select a tier for each kit');
+                    return;
+                }
+                
+                // Get current date
+                const today = new Date();
+                const formattedDate = today.toISOString().split('T')[0];
+                
+                // Generate the text content
+                let content = `ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n`;
+                content += `  ✧ SpyMC Player ✧\n`;
+                content += `ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n`;
+                content += `Player Information\n`;
+                content += `✧ PLAYER NAME: ${playerName}\n`;
+                content += `ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n`;
+                content += `✧ Assigned Tiers and Kits!\n`;
+                
+                // Add all kit tiers
+                content += `✦ NETHPOT: ${kitTiers['NETHPOT'] || 'HT1'}\n`;
+                content += `✦ SWORD: ${kitTiers['SWORD'] || 'HT1'}\n`;
+                content += `✦ CRYSTAL: ${kitTiers['CRYSTAL'] || 'HT1'}\n`;
+                content += `✦ UHC: ${kitTiers['UHC'] || 'HT1'}\n`;
+                content += `✦ AXE: ${kitTiers['AXE'] || 'HT1'}\n`;
+                content += `✦ SMP KIT: ${kitTiers['SMP'] || 'HT1'}\n`;
+                content += `✦ MACE: ${kitTiers['MACE'] || 'HT1'}\n`;
+                content += `ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n`;
+                content += `✧ Player Test Date\n`;
+                content += `✧ TEST DATE: ${formattedDate}\n`;
+                content += `ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n`;
+                
+                // Update preview
+                previewContent.textContent = content;
+                
+                // Show preview
+                formContainer.style.display = 'none';
+                previewContainer.style.display = 'block';
+                
+                // Animate preview appearance
+                anime({
+                    targets: previewContainer,
+                    translateY: [20, 0],
+                    opacity: [0, 1],
+                    duration: 800,
+                    easing: 'easeOutExpo'
+                });
+            });
+        }
+
+        // Submit to Google Drive
+        function setupSubmitButton() {
+            const submitBtn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('submitSpinner');
+            const statusMessage = document.getElementById('statusMessage');
+            const previewContent = document.getElementById('previewContent');
+            
+            submitBtn.addEventListener('click', async () => {
+                const playerName = document.getElementById('playerName').value.trim();
+                const content = previewContent.textContent;
+                const fileName = `${playerName.toLowerCase()}.txt`;
+                
+                // Show loading spinner
+                submitBtn.disabled = true;
+                spinner.style.display = 'block';
+                statusMessage.style.display = 'none';
+                
+                try {
+                    // Upload to Google Drive
+                    const result = await uploadToDrive(fileName, content);
+                    
+                    // Show success message
+                    showSuccess(`File "${fileName}" successfully uploaded to Google Drive!`);
+                    
+                    console.log('File uploaded:', result);
+                } catch (error) {
+                    console.error('Error uploading file:', error);
+                    showError('Error uploading file. Please try again.');
+                } finally {
+                    submitBtn.disabled = false;
+                    spinner.style.display = 'none';
+                }
+            });
+        }
+
+        // Edit report
+        function setupEditButton() {
+            const editBtn = document.getElementById('editBtn');
+            const formContainer = document.getElementById('formContainer');
+            const previewContainer = document.getElementById('previewContainer');
+            
+            editBtn.addEventListener('click', () => {
+                // Hide preview and show form
+                anime({
+                    targets: previewContainer,
+                    translateY: 20,
+                    opacity: 0,
+                    duration: 500,
+                    easing: 'easeInExpo',
+                    complete: () => {
+                        previewContainer.style.display = 'none';
+                        formContainer.style.display = 'block';
+                        
+                        // Animate form appearance
+                        anime({
+                            targets: formContainer,
+                            translateY: [20, 0],
+                            opacity: [0, 1],
+                            duration: 800,
+                            easing: 'easeOutExpo'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message success';
+            statusMessage.style.display = 'block';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                anime({
+                    targets: statusMessage,
+                    opacity: 0,
+                    duration: 500,
+                    easing: 'easeOutExpo'
+                });
+            }, 5000);
+        }
+
+        // Show error message
+        function showError(message) {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message error';
+            statusMessage.style.display = 'block';
+            
+            // Shake animation for error
+            anime({
+                targets: statusMessage,
+                translateX: [-5, 5, -5, 5, 0],
+                duration: 400,
+                easing: 'easeInOutSine'
+            });
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                anime({
+                    targets: statusMessage,
+                    opacity: 0,
+                    duration: 500,
+                    easing: 'easeOutExpo'
+                });
+            }, 5000);
+        }
+
+        // Initialize everything
+        function init() {
+            initParticles();
+            animateElements();
+            setupTierSelection();
+            setupGenerateButton();
+            initGoogleAPI();
+            setupSubmitButton();
+            setupEditButton();
+            
+            // Add resize event listener
+            window.addEventListener('resize', initParticles);
+        }
+
+        // Start the application
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
