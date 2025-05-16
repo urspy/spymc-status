@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            /* Cyberpunk Color Scheme */
             --bg-primary: #0f0f1a;
             --bg-secondary: #1a1a2e;
             --bg-tertiary: #25253d;
@@ -25,22 +24,14 @@
             --warning: #ffcc00;
             --danger: #ff3860;
             --info: #00aaff;
-            
-            /* Glow effects */
             --glow-primary: 0 0 15px rgba(0, 240, 255, 0.6);
             --glow-secondary: 0 0 15px rgba(123, 45, 255, 0.4);
-            
-            /* Shadows */
             --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.3);
             --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
             --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.5);
-            
-            /* Transitions */
             --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-medium: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            
-            /* Theme gradient */
             --theme-gradient: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
         }
 
@@ -108,7 +99,6 @@
             margin-right: auto;
         }
 
-        /* Form styles */
         .form-container {
             background: var(--bg-secondary);
             border-radius: 16px;
@@ -173,7 +163,6 @@
             box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.2), var(--shadow-sm);
         }
 
-        /* Kit selection */
         .kits-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -213,7 +202,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Tier selection */
         .tier-container {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -250,7 +238,6 @@
             font-weight: 700;
         }
 
-        /* Preview container */
         .preview-container {
             background: var(--bg-secondary);
             border-radius: 16px;
@@ -288,7 +275,6 @@
             box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
         }
 
-        /* Buttons */
         .btn-container {
             display: flex;
             justify-content: center;
@@ -357,7 +343,6 @@
             border-color: rgba(0, 240, 255, 0.3);
         }
 
-        /* Status message */
         .status-message {
             padding: 1rem;
             border-radius: 8px;
@@ -380,7 +365,6 @@
             color: var(--danger);
         }
 
-        /* Loading spinner */
         .spinner {
             display: none;
             width: 20px;
@@ -395,7 +379,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Particles */
         .particles {
             position: fixed;
             top: 0;
@@ -429,7 +412,6 @@
             100% { transform: translateY(-1200px) translateX(200px) rotate(360deg); opacity: 0; }
         }
 
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             .form-container, .preview-container {
                 padding: 1.5rem;
@@ -487,17 +469,14 @@
     </style>
 </head>
 <body>
-    <!-- Particles background -->
     <div class="particles" id="particles"></div>
     
     <div class="container">
-        <!-- Logo -->
         <img src="https://i.ibb.co/tMF05rbH/image69.png" alt="SpyMC" class="logo">
         
         <h1>TIER ASSIGNMENT SYSTEM</h1>
         <p class="subtitle">Assign and manage player tiers across all game kits with precision</p>
         
-        <!-- Form -->
         <div class="form-container" id="formContainer">
             <div class="form-group">
                 <label for="playerName"><i class="fas fa-user" style="margin-right: 8px;"></i> Player Name</label>
@@ -641,7 +620,6 @@
             </div>
         </div>
         
-        <!-- Preview -->
         <div class="preview-container" id="previewContainer">
             <div class="preview-content" id="previewContent"></div>
             
@@ -661,61 +639,35 @@
         </div>
     </div>
 
-    <!-- Load Google API client -->
     <script src="https://apis.google.com/js/api.js"></script>
     <script>
-        // API Configuration
-        const folderId = "1fvamSbNgUaT3i7apQG8AvyhvnT_HG4Oj"; // Your Google Drive folder ID
-        const CLIENT_ID = "1052141501841-hc634dapf2irlue8j6dml4m1f8qv0iuj.apps.googleusercontent.com";
+        // Configuration
+        const FOLDER_ID = "1fvamSbNgUaT3i7apQG8AvyhvnT_HG4Oj";
         const API_KEY = "AIzaSyBUKIGUAn0hX_YmLtdZyIMwrjzsLcfTldg";
         const SCOPES = "https://www.googleapis.com/auth/drive.file";
 
-        let googleAuth;
-
         // Initialize Google API
-        function initGoogleAPI() {
-            gapi.load('client:auth2', () => {
-                gapi.client.init({
+        async function initGoogleAPI() {
+            try {
+                await gapi.client.init({
                     apiKey: API_KEY,
-                    clientId: CLIENT_ID,
                     scope: SCOPES,
                     discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
-                }).then(() => {
-                    googleAuth = gapi.auth2.getAuthInstance();
-                    
-                    // Listen for sign-in state changes
-                    googleAuth.isSignedIn.listen(updateSigninStatus);
-                    
-                    // Handle initial sign-in state
-                    updateSigninStatus(googleAuth.isSignedIn.get());
-                    
-                    console.log("Google API initialized");
-                }).catch(err => {
-                    console.error("Error initializing Google API", err);
-                    showError("Failed to initialize Google services");
                 });
-            });
-        }
-
-        function updateSigninStatus(isSignedIn) {
-            if (isSignedIn) {
-                console.log("User is signed in");
-            } else {
-                console.log("User is not signed in");
+                console.log("Google API initialized");
+            } catch (err) {
+                console.error("Error initializing Google API", err);
+                showError("Failed to initialize Google services");
+                throw err;
             }
         }
 
         // Upload file to Google Drive
         async function uploadToDrive(fileName, content) {
             try {
-                // Ensure user is signed in
-                if (!googleAuth.isSignedIn.get()) {
-                    await googleAuth.signIn();
-                }
-
                 const fileMetadata = {
                     name: fileName,
-                    parents: [folderId],
+                    parents: [FOLDER_ID],
                     mimeType: 'text/plain'
                 };
 
@@ -730,9 +682,20 @@
                     fields: 'id,name,webViewLink'
                 });
 
+                if (!response.result.id) {
+                    throw new Error("No file ID returned from Google Drive");
+                }
+
                 return response.result;
             } catch (error) {
                 console.error("Error uploading file:", error);
+                
+                // Handle specific Google API errors
+                if (error.result && error.result.error) {
+                    const apiError = error.result.error;
+                    throw new Error(`Google API Error: ${apiError.message} (${apiError.code})`);
+                }
+                
                 throw error;
             }
         }
@@ -864,7 +827,7 @@
                 // Generate the text content
                 let content = `ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n`;
                 content += `  ✧ SpyMC Player ✧\n`;
-                content += `ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n`;
+                content += `ㅡㅡㅡㅡㅡ���ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n`;
                 content += `Player Information\n`;
                 content += `✧ PLAYER NAME: ${playerName}\n`;
                 content += `ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n`;
@@ -911,6 +874,12 @@
             submitBtn.addEventListener('click', async () => {
                 const playerName = document.getElementById('playerName').value.trim();
                 const content = previewContent.textContent;
+                
+                if (!content) {
+                    showError('No content to upload. Please generate a report first.');
+                    return;
+                }
+                
                 const fileName = `${playerName.toLowerCase()}.txt`;
                 
                 // Show loading spinner
@@ -928,7 +897,15 @@
                     console.log('File uploaded:', result);
                 } catch (error) {
                     console.error('Error uploading file:', error);
-                    showError('Error uploading file. Please try again.');
+                    
+                    let errorMessage = 'Error uploading file. Please try again.';
+                    if (error.message.includes('Google API Error')) {
+                        errorMessage = error.message.replace('Google API Error: ', '');
+                    } else if (error.message.includes('No file ID')) {
+                        errorMessage = 'Upload failed: No confirmation from Google Drive';
+                    }
+                    
+                    showError(errorMessage);
                 } finally {
                     submitBtn.disabled = false;
                     spinner.style.display = 'none';
@@ -1012,17 +989,29 @@
         }
 
         // Initialize everything
-        function init() {
-            initParticles();
-            animateElements();
-            setupTierSelection();
-            setupGenerateButton();
-            initGoogleAPI();
-            setupSubmitButton();
-            setupEditButton();
-            
-            // Add resize event listener
-            window.addEventListener('resize', initParticles);
+        async function init() {
+            try {
+                initParticles();
+                animateElements();
+                setupTierSelection();
+                setupGenerateButton();
+                
+                // Load Google API
+                await new Promise((resolve) => {
+                    gapi.load('client', resolve);
+                });
+                
+                await initGoogleAPI();
+                
+                setupSubmitButton();
+                setupEditButton();
+                
+                // Add resize event listener
+                window.addEventListener('resize', initParticles);
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showError('Failed to initialize application. Please refresh the page.');
+            }
         }
 
         // Start the application
