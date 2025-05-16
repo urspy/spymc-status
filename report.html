@@ -641,23 +641,48 @@
 
     <script src="https://apis.google.com/js/api.js"></script>
     <script>
-        // Configuration
+        // Service Account Configuration
+        const SERVICE_ACCOUNT = {
+            type: "service_account",
+            project_id: "spymc-24",
+            private_key_id: "03b66348ba5273b5dd069bcf8049648cf1cb82c9",
+            private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC18z8nUV+UEmwD\nGHDt17aei5HMAB/fZoUr/VJGJeJZ3x/tsM+V0DVJKMlAE/xfmISjwbTrgG5rzc1w\nFhXoqdTZQhVTuvRzyvhkMoM+jhU16XJIbZCH8Ue7nofYamkPjGKmIBwkhPAjmUYL\nrfglv0xQaArge5eAqLuYDmhdx20h2RXcFmQlR5Y3wMTbpqYNh2byyzxRWydLFL2/\n6doQ05Totwo413uYZvqCxEO07hnRbC1EfWhQ2zs7jcKeP2ikQ47wXjrjy77bn/iE\nizmENMnIHJ7pr2JJB9CS73tn+u8LNBB+N7AH/H720dzz0xBO2mYQHoDai5lzwsXB\nVaEoiKUhAgMBAAECggEAAU6i51k+JWCv1k0we9efEBWIRx3AcjOY2lTive6baTI2\nrFenA3ha9vsW3bcnCtgcKoGuQeY1ejXLd4uDvcer5/cBveJry4HWS1X85mVRQVwQ\n059h40V4UqCUG5nBcSNSOXJP8XKOYnBr9efajrQzS/1AssCAjqPnsR3NYdBtzXPw\nMg9A4sp8LzLUI9oH58LMVQLdj3pXL8w3A/C1XyLG5RjfyGBOR2d9ASfNpm2KaJtx\nyALHvtOG9STcqJSCnhFeHrzn0raSk7kHrOa9DreGaTQYtaODGKmGwujVkDXu6IWj\neuUUA8yerg8Ig3DlIuwvg1XHY8EHSJzpaDBNzOLgnwKBgQDr9u6eRVEbv++9to1z\nxlYozvQb9/+rJjpkFLPp4mdZpIHvGMzxjSgOnbOiAYwwLRZyVJuWtM1R9Lf6AJf0\nR+GcDtGSPk3RhL3jPSLy4NmfivIrIpdR75c5DOdmZftDKdrfZn8wvTZeayHNA3fp\nuXMTppiQAUZXL3leF0mgydp1KwKBgQDFZjmnlXP/8Pe4NTnzl41C9LOQh87vbWbp\nfPayjdrcdNB+N6UNPMKM8CJofBdr9oQY7wh27qRGnL/2DDVwPZSAu9Z7ABPVzIol\noLbdizTapDIzw1lFz4p1weEKMx3IcyEwE+IM0NFI3Wa2PVd73XPFlAvYReCPZczi\nCVrBd5hA4wKBgA2ikDlPEhfDaIwS32ugO1xSUSLImtp99APSem76aTRx4Bw716Ph\nnz3w+O9UnZAvGsvyfacgvXiN5o+otx8jhDLrXErSFNcVj49w+fME8S5Z7hJ2Bj5y\n1M80Iq71F6bS5VXha1oapOih0isxlx1HXRH2n3w6xqDFGoNIXzXOVDRPAoGBALzB\nOkI4E9rZxVY8dzSpZyduK8H5SvQBLdX4a0FjibMidDcs6EOXJQV1ncFBX3gaGkhp\nUTPAkA8BVkFlfTfdeoH6m2W0NkNLOZIvcoy3zwt+1I5Qrq2lfeWKRbDmHgWNqV96\ns73Dc0v0gYGjeGL15/02yni8oLUeB+LgRQsYW9s3AoGBALFbIjIN6FEHV4ZeP6XO\nYc5/aSUv4OUGcQt3VjoGQBICqV1Bw9j6j0PU55poVAUESZPCYnojbpiZRqwI7zRh\n7GJCXFBQgJRBQa1Y/gH+gliUof3XdZzMCICvcDI3NCdlDvXDBcXxGq3RESXwQmB0\n8r1UJHrc7Z+dpx3NKHU+j5Pd\n-----END PRIVATE KEY-----\n",
+            client_email: "spymc-upload@spymc-24.iam.gserviceaccount.com",
+            client_id: "116840620375736038082",
+            auth_uri: "https://accounts.google.com/o/oauth2/auth",
+            token_uri: "https://oauth2.googleapis.com/token",
+            auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+            client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/spymc-upload%40spymc-24.iam.gserviceaccount.com"
+        };
+
         const FOLDER_ID = "1fvamSbNgUaT3i7apQG8AvyhvnT_HG4Oj";
-        const API_KEY = "AIzaSyBUKIGUAn0hX_YmLtdZyIMwrjzsLcfTldg";
         const SCOPES = "https://www.googleapis.com/auth/drive.file";
 
         // Initialize Google API
         async function initGoogleAPI() {
             try {
                 await gapi.client.init({
-                    apiKey: API_KEY,
+                    apiKey: "AIzaSyBUKIGUAn0hX_YmLtdZyIMwrjzsLcfTldg",
+                    clientId: SERVICE_ACCOUNT.client_id,
                     scope: SCOPES,
                     discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
                 });
-                console.log("Google API initialized");
+
+                // Authenticate with service account
+                const auth = new google.auth.JWT(
+                    SERVICE_ACCOUNT.client_email,
+                    null,
+                    SERVICE_ACCOUNT.private_key,
+                    SCOPES
+                );
+
+                await auth.authorize();
+                gapi.client.setToken(auth.getAuthResponse());
+                
+                console.log("Google API initialized with service account");
             } catch (err) {
                 console.error("Error initializing Google API", err);
-                showError("Failed to initialize Google services");
+                showError("Failed to initialize Google services. Please refresh the page.");
                 throw err;
             }
         }
@@ -827,7 +852,7 @@
                 // Generate the text content
                 let content = `ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n`;
                 content += `  ✧ SpyMC Player ✧\n`;
-                content += `ㅡㅡㅡㅡㅡ���ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n`;
+                content += `ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n`;
                 content += `Player Information\n`;
                 content += `✧ PLAYER NAME: ${playerName}\n`;
                 content += `ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n`;
@@ -903,6 +928,8 @@
                         errorMessage = error.message.replace('Google API Error: ', '');
                     } else if (error.message.includes('No file ID')) {
                         errorMessage = 'Upload failed: No confirmation from Google Drive';
+                    } else if (error.message.includes('Failed to initialize')) {
+                        errorMessage = 'Failed to connect to Google services. Please refresh the page.';
                     }
                     
                     showError(errorMessage);
@@ -998,7 +1025,7 @@
                 
                 // Load Google API
                 await new Promise((resolve) => {
-                    gapi.load('client', resolve);
+                    gapi.load('client:auth2', resolve);
                 });
                 
                 await initGoogleAPI();
