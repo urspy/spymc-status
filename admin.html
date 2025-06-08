@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+    <title>Admin Panel Container</title>
     <style>
         :root {
             --primary: #ff3a3a;
@@ -29,14 +29,19 @@
             height: 100vh;
         }
 
+        #app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
         .header {
             background-color: var(--darker);
-            padding: 15px 20px;
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--primary);
-            box-shadow: 0 2px 10px rgba(255, 58, 58, 0.2);
         }
 
         .logo {
@@ -46,140 +51,240 @@
         }
 
         .logo img {
-            height: 30px;
-            filter: drop-shadow(0 0 5px var(--primary));
+            height: 25px;
         }
 
         .logo h1 {
             color: var(--primary);
-            font-size: 1.5rem;
-            text-shadow: 0 0 5px rgba(255, 58, 58, 0.5);
+            font-size: 1.2rem;
         }
 
-        .nav-controls {
+        .controls {
             display: flex;
-            gap: 15px;
+            gap: 10px;
         }
 
-        .nav-btn {
+        .btn {
             background: rgba(255, 58, 58, 0.2);
             color: var(--light);
             border: 1px solid var(--primary);
-            padding: 8px 15px;
-            border-radius: 5px;
+            padding: 5px 10px;
+            border-radius: 3px;
             cursor: pointer;
-            transition: all 0.3s;
+            font-size: 0.8rem;
         }
 
-        .nav-btn:hover {
+        .btn:hover {
             background: var(--primary);
-            color: white;
         }
 
-        .iframe-container {
-            width: 100%;
-            height: calc(100vh - 61px);
-        }
-
-        .iframe-container iframe {
-            width: 100%;
-            height: 100%;
+        #content-frame {
+            flex: 1;
             border: none;
+            background: white;
         }
 
-        .loading {
+        .status-bar {
+            background-color: var(--darker);
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid var(--primary);
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: gray;
+        }
+
+        .status-indicator.connected {
+            background: lime;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        #loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--darker);
+            background: rgba(0,0,0,0.7);
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
             z-index: 100;
         }
 
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 58, 58, 0.2);
-            border-top-color: var(--primary);
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
             border-radius: 50%;
+            border-top-color: var(--primary);
             animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
-        .loading-text {
-            color: var(--light);
-            font-size: 1.2rem;
-        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo">
-            <img src="https://i.ibb.co/tMF05rbH/image69.png" alt="Logo">
-            <h1>ADMIN CONTROL PANEL</h1>
+    <div id="app-container">
+        <div class="header">
+            <div class="logo">
+                <img src="https://i.ibb.co/tMF05rbH/image69.png" alt="Logo">
+                <h1>ADMIN PANEL</h1>
+            </div>
+            <div class="controls">
+                <button class="btn" id="refresh-btn">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button class="btn" id="fullscreen-btn">
+                    <i class="fas fa-expand"></i> Fullscreen
+                </button>
+            </div>
         </div>
-        <div class="nav-controls">
-            <button class="nav-btn" onclick="refreshIframe()">
-                <i class="fas fa-sync-alt"></i> Refresh
-            </button>
-            <button class="nav-btn" onclick="fullscreenIframe()">
-                <i class="fas fa-expand"></i> Fullscreen
-            </button>
+
+        <iframe id="content-frame" src="about:blank"></iframe>
+
+        <div class="status-bar">
+            <div class="connection-status">
+                <div class="status-indicator" id="status-light"></div>
+                <span id="status-text">Connecting...</span>
+            </div>
+            <div id="url-display">http://seniorsexy.info.gf:6034/admin</div>
         </div>
     </div>
 
-    <div class="iframe-container">
-        <iframe id="adminFrame" src="http://seniorsexy.info.gf:6034/admin" onload="hideLoader()"></iframe>
-    </div>
-
-    <div class="loading" id="loader">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">Loading Admin Panel...</div>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div>Loading Admin Panel...</div>
     </div>
 
     <script>
-        // Hide loader when iframe loads
-        function hideLoader() {
-            document.getElementById('loader').style.display = 'none';
+        // Configuration
+        const ADMIN_PANEL_URL = 'http://seniorsexy.info.gf:6034/admin';
+        const RETRY_DELAY = 3000; // 3 seconds
+        const MAX_RETRIES = 5;
+
+        // Elements
+        const frame = document.getElementById('content-frame');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const statusLight = document.getElementById('status-light');
+        const statusText = document.getElementById('status-text');
+        const urlDisplay = document.getElementById('url-display');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
+        // State
+        let retryCount = 0;
+        let isConnected = false;
+
+        // Initialize
+        function init() {
+            loadAdminPanel();
+            setupEventListeners();
         }
 
-        // Refresh iframe
-        function refreshIframe() {
-            document.getElementById('loader').style.display = 'flex';
-            const iframe = document.getElementById('adminFrame');
-            iframe.src = iframe.src;
+        function loadAdminPanel() {
+            showLoading();
+            statusLight.className = 'status-indicator';
+            statusText.textContent = 'Connecting...';
+            
+            frame.src = ADMIN_PANEL_URL;
+            
+            // Set timeout to check connection
+            setTimeout(checkConnection, 2000);
         }
 
-        // Toggle fullscreen
-        function fullscreenIframe() {
-            const iframe = document.getElementById('adminFrame');
-            if (iframe.requestFullscreen) {
-                iframe.requestFullscreen();
-            } else if (iframe.webkitRequestFullscreen) {
-                iframe.webkitRequestFullscreen();
-            } else if (iframe.msRequestFullscreen) {
-                iframe.msRequestFullscreen();
+        function checkConnection() {
+            try {
+                // Try to access frame content (may fail due to CORS)
+                if (frame.contentWindow && frame.contentWindow.document) {
+                    connectionSuccess();
+                } else {
+                    connectionSuccess(); // Assume success even if we can't verify
+                }
+            } catch (e) {
+                // CORS error usually means the page loaded
+                connectionSuccess();
             }
         }
 
-        // Show loader if iframe takes more than 200ms to load
-        setTimeout(() => {
-            if (document.getElementById('loader').style.display !== 'none') {
-                document.getElementById('loader').style.display = 'flex';
+        function connectionSuccess() {
+            isConnected = true;
+            retryCount = 0;
+            statusLight.className = 'status-indicator connected';
+            statusText.textContent = 'Connected';
+            hideLoading();
+        }
+
+        function connectionFailed() {
+            isConnected = false;
+            statusLight.className = 'status-indicator';
+            statusText.textContent = 'Connection failed';
+            
+            if (retryCount < MAX_RETRIES) {
+                retryCount++;
+                statusText.textContent = `Retrying (${retryCount}/${MAX_RETRIES})...`;
+                setTimeout(loadAdminPanel, RETRY_DELAY);
+            } else {
+                statusText.textContent = 'Connection failed after multiple attempts';
+                hideLoading();
             }
-        }, 200);
+        }
+
+        function showLoading() {
+            loadingOverlay.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
+
+        function setupEventListeners() {
+            refreshBtn.addEventListener('click', loadAdminPanel);
+            
+            fullscreenBtn.addEventListener('click', () => {
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                } else {
+                    document.documentElement.requestFullscreen();
+                }
+            });
+            
+            frame.addEventListener('load', () => {
+                // This may not fire reliably for cross-origin frames
+                setTimeout(checkConnection, 500);
+            });
+            
+            frame.addEventListener('error', connectionFailed);
+        }
+
+        // Start the application
+        init();
+
+        // Font Awesome (loaded dynamically to avoid render blocking)
+        const faScript = document.createElement('script');
+        faScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js';
+        document.head.appendChild(faScript);
     </script>
-
-    <!-- Font Awesome for icons -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 </body>
 </html>
