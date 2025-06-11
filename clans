@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpyMC - Top 10 Clans</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="icon" href="https://i.ibb.co/tMF05rbH/image69.png">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3a7dff;
+            --primary-dark: #0051cc;
+            --secondary: #00a2ff;
+            --accent: #00c8ff;
+            --dark: #0a0a12;
+            --darker: #050508;
+            --light: #e0e0ff;
+            --card-bg: rgba(15, 15, 25, 0.9);
+            --card-border: rgba(58, 143, 255, 0.2);
+            --text-muted: rgba(200, 220, 255, 0.6);
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(58, 143, 255, 0.05) 0%, transparent 25%),
+                radial-gradient(circle at 80% 70%, rgba(0, 162, 255, 0.05) 0%, transparent 25%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .logo {
+            height: 80px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px var(--primary));
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(58, 143, 255, 0.5);
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin: 20px 0 15px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 20px;
+        }
+
+        .update-info {
+            color: var(--secondary);
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 162, 255, 0.1);
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .leaderboard {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard:hover {
+            border-color: rgba(58, 143, 255, 0.4);
+            box-shadow: 0 5px 15px rgba(58, 143, 255, 0.1);
+        }
+
+        .clan-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .clan-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(58, 143, 255, 0.05);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .clan-item:hover {
+            background: rgba(58, 143, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .rank {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            width: 40px;
+            text-align: center;
+            margin-right: 20px;
+            color: var(--text-muted);
+        }
+
+        .clan-item:nth-child(1) {
+            border-left-color: var(--gold);
+        }
+        .clan-item:nth-child(1) .rank {
+            color: var(--gold);
+            font-weight: bold;
+        }
+
+        .clan-item:nth-child(2) {
+            border-left-color: var(--silver);
+        }
+        .clan-item:nth-child(2) .rank {
+            color: var(--silver);
+            font-weight: bold;
+        }
+
+        .clan-item:nth-child(3) {
+            border-left-color: var(--bronze);
+        }
+        .clan-item:nth-child(3) .rank {
+            color: var(--bronze);
+            font-weight: bold;
+        }
+
+        .clan-info {
+            flex-grow: 1;
+        }
+
+        .clan-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--light);
+            margin-bottom: 5px;
+        }
+
+        .clan-stats {
+            display: flex;
+            gap: 15px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-muted);
+        }
+
+        .stat i {
+            color: var(--accent);
+        }
+
+        .kills {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        .clan-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-left: 20px;
+            border: 2px solid var(--card-border);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .note {
+            background: rgba(200, 220, 255, 0.1);
+            border-left: 3px solid var(--text-muted);
+            padding: 12px 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .note-title {
+            color: var(--text-muted);
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .note-title i {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .clan-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px;
+            }
+            
+            .rank {
+                margin-right: 0;
+                margin-bottom: 10px;
+                width: auto;
+                align-self: flex-start;
+            }
+            
+            .clan-logo {
+                margin-left: 0;
+                margin-top: 10px;
+                align-self: flex-end;
+            }
+            
+            .clan-stats {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="https://i.ibb.co/tMF05rbH/image69.png" alt="SpyMC" class="logo">
+            <h1>TOP 10 CLANS</h1>
+            <p class="subtitle">The most powerful factions in the SpyMC universe</p>
+            <div class="update-info">
+                <i class="fas fa-sync-alt"></i> Last updated: 11/06/2025
+            </div>
+        </header>
+
+        <div class="leaderboard">
+            <h2><i class="fas fa-trophy"></i> Clan Leaderboard</h2>
+            <p>Ranked by total kills across all SpyMC game modes</p>
+            
+            <div class="clan-list">
+                <div class="clan-item">
+                    <div class="rank">1</div>
+                    <div class="clan-info">
+                        <div class="clan-name">TS</div>
+                        <div class="clan-stats">
+                            <div class="stat">
+                                <i class="fas fa-skull"></i>
+                                <span class="kills">6156⚔</span> total kills
+                            </div>
+                        </div>
+                    </div>
+                    <img src="https://i.ibb.co/fGDjTp64/logo.png" alt="TS Logo" class="clan-logo">
+                </div>
+                
+                <div class="clan-item">
+                    <div class="rank">2</div>
+                    <div class="clan-info">
+                        <div class="clan-name">NBAyoungBoys</div>
+                        <div class="clan-stats">
+                            <div class="stat">
+                                <i class="fas fa-skull"></i>
+                                <span class="kills">4807⚔</span> total kills
+                            </div>
+                        </div>
+                    </div>
+                    <img src="https://i.ibb.co/fGDjTp64/logo.png" alt="NBA Logo" class="clan-logo">
+                </div>
+                
+                <div class="clan-item">
+                    <div class="rank">3</div>
+                    <div class="clan-info">
+                        <div class="clan-name">Fury</div>
+                        <div class="clan-stats">
+                            <div class="stat">
+                                <i class="fas fa-skull"></i>
+                                <span class="kills">3699⚔</span> total kills
+                            </div>
+                        </div>
+                    </div>
+                    <img src="https://i.ibb.co/fGDjTp64/logo.png" alt="Fury Logo" class="clan-logo">
+                </div>
+                
+                <div class="clan-item">
+                    <div class="rank">4</div>
+                    <div class="clan-info">
+                        <div class="clan-name">LunarVoid</div>
+                        <div class="clan-stats">
+                            <div class="stat">
+                                <i class="fas fa-skull"></i>
+                                <span class="kills">2907⚔</span> total kills
+                            </div>
+                        </div>
+                    </div>
+                    <img src="https://i.ibb.co/fGDjTp64/logo.png" alt="LunarVoid Logo" class="clan-logo">
+                </div>
+                
+                <div class="clan-item">
+                    <div class="rank">5</div>
+                    <div class="clan-info">
+                        <div class="clan-name">Dominaters</div>
+                        <div class="clan-stats">
+                            <div class="stat">
+                                <i class="fas fa-skull"></i>
+                                <span class="kills">2793⚔</span> total kills
+                            </div>
+                        </div>
+                    </div>
+                    <img src="https://i.ibb.co/fGDjTp64/logo.png" alt="Dominaters Logo" class="clan-logo">
+                </div>
+                
+                <div class="clan-item">
+                    <div class="rank">6</div>
+                    <div class="clan-info">
+                        <div class="clan-name">PRO</div>
+                        <div class="clan-stats">
+                            <div class="stat">
+                                <i class="fas fa-skull"></i>
+                                <span class="kills">2669⚔</span> total kills
+                            </div>
+                        </div>
+                    </div>
+                    <img src="https://i.ibb.co/fGDjTp64/logo.png" alt="PRO Logo" class="clan-logo">
+                </div>
+                
+                <div class="clan-item">
+                    <div class="rank">7</div>
+                    <div class="clan-info">
+                        <div class="clan-name">CrescentAS</div>
+                        <div class="clan-stats">
+                            <div class="stat">
+                                <i class="fas fa-skull"></i>
+                                <span class="kills">2464⚔</span> total kills
+                            </div>
+                        </div>
+                    </div>
+                    <img src="https://i.ibb.co/fGDjTp64/logo.png" alt="CrescentAS Logo" class="clan-logo">
+                </div>
+                
+                <div class="clan-item">
+                    <div class="rank">8</div>
+                    <div class="clan-info">
+                        <div class="clan-name">YuuJin</div>
+                        <div class="clan-stats">
+                            <div class="stat">
+                                <i class="fas fa-skull"></i>
+                                <span class="kills">1601⚔</span> total kills
+                            </div>
+                        </div>
+                    </div>
+                    <img src="https://i.ibb.co/fGDjTp64/logo.png" alt="YuuJin Logo" class="clan-logo">
+                </div>
+                
+                <div class="clan-item">
+                    <div class="rank">9</div>
+                    <div class="clan-info">
+                        <div class="clan-name">TWN</div>
+                        <div class="clan-stats">
+                            <div class="stat">
+                                <i class="fas fa-skull"></i>
+                                <span class="kills">1477⚔</span> total kills
+                            </div>
+                        </div>
+                    </div>
+                    <img src="https://i.ibb.co/fGDjTp64/logo.png" alt="TWN Logo" class="clan-logo">
+                </div>
+                
+                <div class="clan-item">
+                    <div class="rank">10</div>
+                    <div class="clan-info">
+                        <div class="clan-name">OneManArmy</div>
+                        <div class="clan-stats">
+                            <div class="stat">
+                                <i class="fas fa-skull"></i>
+                                <span class="kills">1444⚔</span> total kills
+                            </div>
+                        </div>
+                    </div>
+                    <img src="https://i.ibb.co/fGDjTp64/logo.png" alt="OneManArmy Logo" class="clan-logo">
+                </div>
+            </div>
+        </div>
+
+        <div class="note">
+            <div class="note-title">
+                <i class="fas fa-info-circle"></i> About Clan Rankings
+            </div>
+            <p>Clan rankings are calculated based on total kills across all competitive game modes on the SpyMC network. Rankings are updated weekly. Clans must maintain at least 5 active members to be eligible for the leaderboard.</p>
+        </div>
+
+        <footer>
+            <p>© 2025 SpyMC Network | Clan Leaderboard | All stats are tracked automatically</p>
+            <p>Want your clan on the leaderboard? Compete in SpyMC tournaments and events!</p>
+        </footer>
+    </div>
+</body>
+</html>
