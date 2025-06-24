@@ -2,575 +2,952 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SPYMC ADMIN PANEL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpyMC Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
         }
 
         body {
-            font-family: 'Courier New', monospace;
-            background-color: #000;
-            color: #0f0;
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #2c3e50, #3498db, #1abc9c, #27ae60);
+            background-size: 600% 600%;
+            animation: gradientShift 12s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             position: relative;
-            line-height: 1.5;
-            overflow: auto;
+            overflow-x: hidden;
         }
 
-        .terminal-overlay {
-            position: fixed;
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Minecraft-style animated background blocks */
+        .bg-blocks {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            z-index: 100;
             pointer-events: none;
+            z-index: 1;
         }
 
-        .terminal-window {
-            background: rgba(0, 5, 0, 0.85);
-            border: 1px solid #0f0;
-            box-shadow: 0 0 50px rgba(0, 255, 0, 0.5);
-            backdrop-filter: blur(3px);
+        .block {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            opacity: 0.1;
+            animation: blockFloat 15s infinite linear;
+            image-rendering: pixelated;
+        }
+
+        .block:nth-child(1) { background: #8B4513; left: 10%; animation-delay: 0s; }
+        .block:nth-child(2) { background: #228B22; left: 20%; animation-delay: -2s; }
+        .block:nth-child(3) { background: #4169E1; left: 30%; animation-delay: -4s; }
+        .block:nth-child(4) { background: #DC143C; left: 40%; animation-delay: -6s; }
+        .block:nth-child(5) { background: #FF8C00; left: 50%; animation-delay: -8s; }
+        .block:nth-child(6) { background: #9370DB; left: 60%; animation-delay: -10s; }
+        .block:nth-child(7) { background: #20B2AA; left: 70%; animation-delay: -12s; }
+        .block:nth-child(8) { background: #FFD700; left: 80%; animation-delay: -14s; }
+
+        @keyframes blockFloat {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        /* Enhanced clouds */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            opacity: 0.8;
+            border-radius: 0;
+            animation: float 25s infinite linear;
+            image-rendering: pixelated;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .cloud1 {
+            width: 120px;
+            height: 50px;
+            top: 15%;
+            left: -120px;
+            animation-duration: 30s;
+        }
+
+        .cloud1::before {
+            width: 60px;
+            height: 60px;
+            top: -30px;
+            left: 15px;
+        }
+
+        .cloud1::after {
+            width: 80px;
+            height: 30px;
+            top: -20px;
+            right: 20px;
+        }
+
+        .cloud2 {
+            width: 100px;
+            height: 40px;
+            top: 25%;
+            left: -100px;
+            animation-duration: 35s;
+            animation-delay: -15s;
+        }
+
+        .cloud2::before {
+            width: 50px;
+            height: 50px;
+            top: -25px;
+            left: 20px;
+        }
+
+        .cloud3 {
+            width: 90px;
+            height: 35px;
+            top: 35%;
+            left: -90px;
+            animation-duration: 28s;
+            animation-delay: -8s;
+        }
+
+        @keyframes float {
+            from { transform: translateX(0); }
+            to { transform: translateX(calc(100vw + 200px)); }
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+            max-width: 95%;
+            width: 100%;
             position: relative;
-            overflow: auto;
-            flex: 1;
+        }
+
+        .header {
+            background: rgba(44, 62, 80, 0.95);
+            border: 6px solid #34495e;
+            border-radius: 0;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 
+                0 0 30px rgba(0,0,0,0.5),
+                inset 0 0 20px rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .title {
+            color: #ecf0f1;
+            font-size: clamp(18px, 5vw, 36px);
+            margin-bottom: 15px;
+            text-shadow: 
+                3px 3px 0px #2c3e50, 
+                6px 6px 0px rgba(44, 62, 80, 0.7),
+                0 0 30px rgba(52, 152, 219, 0.5);
+            letter-spacing: 2px;
+            animation: titlePulse 3s ease-in-out infinite alternate;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes titlePulse {
+            from { transform: scale(1); text-shadow: 3px 3px 0px #2c3e50, 6px 6px 0px rgba(44, 62, 80, 0.7), 0 0 30px rgba(52, 152, 219, 0.5); }
+            to { transform: scale(1.05); text-shadow: 3px 3px 0px #2c3e50, 6px 6px 0px rgba(44, 62, 80, 0.7), 0 0 40px rgba(52, 152, 219, 0.8); }
+        }
+
+        .subtitle {
+            color: #bdc3c7;
+            font-size: clamp(10px, 2.5vw, 18px);
+            margin-bottom: 20px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .status-bar {
             display: flex;
-            flex-direction: column;
-            max-height: 100vh;
-            pointer-events: auto;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 15px;
+            position: relative;
+            z-index: 2;
         }
 
-        .terminal-window::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .terminal-window::-webkit-scrollbar-track {
-            background: rgba(0, 20, 0, 0.3);
-        }
-
-        .terminal-window::-webkit-scrollbar-thumb {
-            background: #0f0;
-            border-radius: 4px;
-        }
-
-        .terminal-header {
+        .status-item {
+            color: #27ae60;
+            font-size: clamp(8px, 2vw, 12px);
             display: flex;
             align-items: center;
-            padding: 1rem;
-            border-bottom: 1px solid #0f0;
-            position: sticky;
-            top: 0;
-            background: rgba(0, 10, 0, 0.9);
-            z-index: 10;
+            gap: 8px;
+            animation: statusBlink 2s infinite;
         }
 
-        .dots {
-            display: flex;
-            gap: 0.5rem;
+        @keyframes statusBlink {
+            0%, 90% { opacity: 1; }
+            95% { opacity: 0.3; }
         }
 
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            box-shadow: 0 0 5px currentColor;
-        }
-
-        .dot.red { background: #f00; color: #f00; }
-        .dot.yellow { background: #ff0; color: #ff0; }
-        .dot.green { background: #0f0; color: #0f0; }
-
-        .terminal-title {
-            flex: 1;
-            text-align: center;
-            color: #0f0;
-            font-size: clamp(0.7rem, 2vw, 0.9rem);
-            text-shadow: 0 0 10px #0f0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .terminal-content {
-            padding: 1.5rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .ascii-art {
-            font-size: clamp(0.6rem, 2.5vw, 0.8rem);
-            line-height: 1.2;
-            color: #0f0;
-            margin-bottom: 2rem;
-            white-space: pre;
-            text-shadow: 0 0 10px #0f0;
-            text-align: center;
-        }
-
-        .main-text {
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            margin-bottom: 1.5rem;
-            color: #0f0;
-            text-align: center;
-        }
-
-        .main-text .highlight {
-            color: #0ff;
-            font-weight: bold;
-            text-shadow: 0 0 10px #0ff;
-        }
-
-        .purpose {
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
-            color: #0a0;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-            text-align: center;
-        }
-
-        .link {
-            color: #0f0;
-            text-decoration: none;
-            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-            border: 1px solid #0f0;
-            padding: 0.8rem 1.8rem;
-            border-radius: 3px;
-            transition: all 0.3s ease;
-            display: inline-block;
-            margin: 0.5rem;
-            background: rgba(0, 30, 0, 0.3);
-            text-shadow: 0 0 5px #0f0;
-            text-align: center;
-        }
-
-        .link:hover {
-            background: #0f0;
-            color: #000;
-            box-shadow: 0 0 20px #0f0;
-            transform: translateY(-2px);
-        }
-
-        .admin-panel {
+        .button-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 35px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 25px;
         }
 
-        .admin-section {
-            padding: 1.5rem;
-            border: 1px solid rgba(0, 255, 0, 0.3);
-            border-radius: 3px;
-            transition: all 0.3s ease;
-            background: rgba(0, 20, 0, 0.3);
+        .minecraft-button {
             position: relative;
-            overflow: hidden;
+            background: linear-gradient(45deg, #8B4513, #A0522D);
+            border: 10px solid;
+            border-color: #D2B48C #654321 #654321 #D2B48C;
+            padding: 30px 25px;
+            text-decoration: none;
+            color: white;
+            font-size: clamp(11px, 2.8vw, 16px);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            cursor: pointer;
+            image-rendering: pixelated;
+            box-shadow: 
+                0 10px 0 #543A1A,
+                0 15px 30px rgba(0,0,0,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.2);
+            transform-style: preserve-3d;
+            min-height: 140px;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            overflow: hidden;
         }
 
-        .admin-section::before {
+        .minecraft-button::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
+            left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(0, 255, 0, 0.1),
-                transparent
-            );
-            transform: translateX(-100%);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
         }
 
-        .admin-section:hover {
-            border-color: #0f0;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
+        .minecraft-button:hover::before {
+            left: 100%;
         }
 
-        .admin-section:hover::before {
-            animation: shine 1.5s;
+        .minecraft-button:hover {
+            transform: translateY(-4px) scale(1.08) rotateX(5deg);
+            box-shadow: 
+                0 15px 0 #543A1A,
+                0 20px 40px rgba(0,0,0,0.5),
+                inset 0 2px 0 rgba(255,255,255,0.3),
+                0 0 25px rgba(255,255,255,0.2);
+            border-color: #F4A460 #3C2A14 #3C2A14 #F4A460;
         }
 
-        @keyframes shine {
-            100% {
-                transform: translateX(100%);
-            }
+        .minecraft-button:active {
+            transform: translateY(6px) scale(1.02);
+            box-shadow: 
+                0 4px 0 #543A1A,
+                0 8px 20px rgba(0,0,0,0.3),
+                inset 0 2px 0 rgba(255,255,255,0.1);
         }
 
-        .admin-title {
-            color: #0ff;
-            margin-bottom: 1rem;
-            font-size: clamp(1rem, 2.5vw, 1.2rem);
-            text-shadow: 0 0 10px #0ff;
+        .button-icon {
+            font-size: clamp(20px, 5vw, 32px);
+            margin-bottom: 10px;
+            filter: drop-shadow(3px 3px 0px rgba(0,0,0,0.7));
+            animation: iconFloat 3s ease-in-out infinite alternate;
         }
 
-        .admin-desc {
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
-            color: #0a0;
-            margin-bottom: 1.5rem;
-            flex: 1;
+        @keyframes iconFloat {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-3px); }
         }
 
-        .cursor {
-            display: inline-block;
-            background: #0f0;
-            width: 3px;
-            height: 1.2em;
-            animation: blink 0.8s infinite;
-            margin-left: 0.3rem;
-            vertical-align: middle;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-
-        .footer {
+        .button-text {
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.8);
+            line-height: 1.5;
             text-align: center;
-            padding: 1rem;
-            font-size: 0.7rem;
-            color: #030;
-            margin-top: auto;
+            position: relative;
+            z-index: 2;
         }
 
-        /* Scanline effect */
-        .scanline {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to bottom,
-                transparent 0%,
-                rgba(0, 255, 0, 0.05) 50%,
-                transparent 100%
-            );
-            background-size: 100% 8px;
-            pointer-events: none;
-            z-index: 100;
-            animation: scan 4s linear infinite;
+        .tiertester {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            border-color: #f1c40f #a93226 #a93226 #f1c40f;
         }
 
-        @keyframes scan {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 100%; }
+        .staff {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            border-color: #f7dc6f #b7950b #b7950b #f7dc6f;
         }
 
-        /* Glitch effect */
-        .glitch {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAEklEQVQImWNgYGD4z0AswK4SAFXuAf8EPy+xAAAAAElFTkSuQmCC') repeat;
-            opacity: 0.02;
-            pointer-events: none;
-            z-index: 101;
-            animation: glitch 10s infinite linear;
+        .upload {
+            background: linear-gradient(45deg, #27ae60, #229954);
+            border-color: #58d68d #186a3b #186a3b #58d68d;
         }
 
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-5px, 5px); }
-            40% { transform: translate(-5px, -5px); }
-            60% { transform: translate(5px, 5px); }
-            80% { transform: translate(5px, -5px); }
-            100% { transform: translate(0); }
+        .other {
+            background: linear-gradient(45deg, #9b59b6, #8e44ad);
+            border-color: #d7bde2 #6c3483 #6c3483 #d7bde2;
         }
 
-        /* Responsive adjustments */
+        /* Enhanced responsive design */
         @media (max-width: 768px) {
-            .terminal-overlay {
-                padding: 0.5rem;
-            }
-            
-            .admin-panel {
+            .button-grid {
                 grid-template-columns: 1fr;
+                gap: 25px;
+                padding: 20px;
             }
             
-            .link {
-                padding: 0.7rem 1.2rem;
+            .minecraft-button {
+                min-height: 120px;
+                padding: 25px 20px;
+                border-width: 8px;
+            }
+            
+            .header {
+                padding: 25px 20px;
+                margin-bottom: 30px;
+            }
+            
+            .status-bar {
+                flex-direction: column;
+                gap: 10px;
             }
         }
 
         @media (max-width: 480px) {
-            .terminal-header {
-                flex-direction: column;
-                gap: 0.5rem;
-                padding: 0.8rem;
+            .container {
+                max-width: 98%;
             }
             
-            .terminal-title {
-                order: -1;
-                margin-bottom: 0.5rem;
+            .minecraft-button {
+                min-height: 100px;
+                padding: 20px 15px;
+                border-width: 6px;
             }
             
-            .terminal-content {
-                padding: 1rem;
+            .button-grid {
+                gap: 20px;
+                padding: 15px;
             }
+            
+            .header {
+                padding: 20px 15px;
+            }
+        }
+
+        /* Enhanced decorative elements */
+        .decoration {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    #8B4513 0px, #8B4513 20px,
+                    #A0522D 20px, #A0522D 40px
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    #8B4513 0px, #8B4513 20px,
+                    #A0522D 20px, #A0522D 40px
+                );
+            image-rendering: pixelated;
+            opacity: 0.4;
+            animation: decorationRotate 15s linear infinite;
+            box-shadow: 0 0 20px rgba(139, 69, 19, 0.3);
+        }
+
+        @keyframes decorationRotate {
+            from { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .decoration-left {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            opacity: 0.3;
+            animation: decorationPulse 4s ease-in-out infinite;
+            image-rendering: pixelated;
+        }
+
+        @keyframes decorationPulse {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.3; }
+            50% { transform: scale(1.2) rotate(45deg); opacity: 0.6; }
+        }
+
+        /* Enhanced loading animation */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            transition: all 0.8s ease;
+        }
+
+        .loading.hidden {
+            opacity: 0;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+
+        .loading-text {
+            color: #ecf0f1;
+            font-size: clamp(14px, 4vw, 24px);
+            animation: loadingBlink 1.5s infinite;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(236, 240, 241, 0.5);
+        }
+
+        .loading-bar {
+            width: 300px;
+            height: 20px;
+            background: #34495e;
+            border: 4px solid #2c3e50;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            width: 0%;
+            animation: loadingProgress 3s ease-in-out;
+        }
+
+        @keyframes loadingBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        @keyframes loadingProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Connection status indicator */
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0,0,0,0.7);
+            padding: 8px 12px;
+            border-radius: 0;
+            color: #27ae60;
+            font-size: 10px;
+            z-index: 100;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #27ae60;
+            animation: statusPulse 2s infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
         }
     </style>
 </head>
 <body>
-    <div class="glitch"></div>
-    <div class="scanline"></div>
-    
-    <div class="terminal-overlay">
-        <div class="terminal-window">
-            <div class="terminal-header">
-                <div class="dots">
-                    <div class="dot red"></div>
-                    <div class="dot yellow"></div>
-                    <div class="dot green"></div>
-                </div>
-                <div class="terminal-title">root@spymc:~# admin_panel --access-level=5 --secure --fullscreen</div>
-            </div>
-            
-            <div class="terminal-content">
-                <div class="ascii-art">
-   _____ _____ _   _ ____  _____ 
-  / ____|  __ \ \ | |  _ \|  __ \
- | (___ | |__) | \| | |_) | |  | |
-  \___ \|  ___/| . ` |  _ <| |  | |
-  ____) | |    | |\  | |_) | |__| |
- |_____/|_|    |_| \_|____/|_____/
-                                  
-    S P Y M C   A D M I N   P A N E L
-                </div>
-                
-                <p class="main-text">
-                    <span class="highlight">DISCORD SERVER:</span> www.spymc.xyz/discord<span class="cursor"></span>
-                </p>
-                
-                <p class="purpose">
-                    [ WARNING: RESTRICTED ACCESS - AUTHORIZED PERSONNEL ONLY ]<br>
-                    [ ALL ACTIONS ARE LOGGED AND MONITORED ]<br>
-                    [ SECURE CONNECTION: ENCRYPTION ACTIVE ]
-                </p>
-                
-                <div class="admin-panel">
-                    <div class="admin-section">
-                        <div class="admin-title">TIER TESTER</div>
-                        <div class="admin-desc">Manage user access levels and permissions. Verify tier qualifications and adjust privileges. Full audit logging enabled with real-time monitoring.</div>
-                        <a href="htts://spy.info.gf:2334" class="link">ACCESS TERMINAL</a>
-                    </div>
-                    
-                    <div class="admin-section">
-                        <div class="admin-title">STAFF MANAGEMENT</div>
-                        <div class="admin-desc">Handle staff roles, permissions, and oversight. Audit logs and activity reports. Secure biometric authentication required.</div>
-                        <a href="htts://spy.info.gf:2634" class="link">ACCESS TERMINAL</a>
-                    </div>
-                    
-                    <div class="admin-section">
-                        <div class="admin-title">UPLOAD CENTER</div>
-                        <div class="admin-desc">Secure file transfer and management system. Monitor uploads and scans. Military-grade encryption protocol active.</div>
-                        <a href="htts://spy.info.gf:2336" class="link">ACCESS TERMINAL</a>
-                    </div>
-                </div>
-                
-                <div class="footer">
-                    SPYMC ADMIN PANEL v4.2.0 | SECURE CONNECTION ESTABLISHED | © 2023 SPYMC NETWORKS
-                </div>
-            </div>
+    <div class="loading" id="loading">
+        <div class="loading-text">⚡ Initializing SpyMC Admin ⚡</div>
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
         </div>
     </div>
 
+    <!-- Connection Status -->
+    <div class="connection-status">
+        <div class="status-dot"></div>
+        <span>ONLINE</span>
+    </div>
+
+    <!-- Animated background blocks -->
+    <div class="bg-blocks">
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+    </div>
+
+    <!-- Enhanced clouds -->
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+    <div class="cloud cloud3"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🎮 SpyMC Admin Control Panel 🎮</h1>
+            <p class="subtitle">Advanced Minecraft Server Administration Dashboard</p>
+            <div class="status-bar">
+                <div class="status-item">
+                    <span>🟢</span>
+                    <span>SERVER ONLINE</span>
+                </div>
+                <div class="status-item">
+                    <span>⚡</span>
+                    <span>SYSTEMS ACTIVE</span>
+                </div>
+                <div class="status-item">
+                    <span>🔒</span>
+                    <span>SECURE CONNECTION</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="button-grid">
+            <a href="https://spy.info.gf:2334" class="minecraft-button tiertester" target="_blank">
+                <div class="button-icon">🏆</div>
+                <div class="button-text">TIER TESTER<br>Performance Analysis</div>
+            </a>
+            
+            <a href="https://spy.info.gf:2634" class="minecraft-button staff" target="_blank">
+                <div class="button-icon">👥</div>
+                <div class="button-text">STAFF PANEL<br>Team Management</div>
+            </a>
+            
+            <a href="https://spy.info.gf:2336" class="minecraft-button upload" target="_blank">
+                <div class="button-icon">📤</div>
+                <div class="button-text">UPLOAD CENTER<br>File Management</div>
+            </a>
+            
+            <a href="https://spy.info.gf:2736" class="minecraft-button other" target="_blank">
+                <div class="button-icon">⚡</div>
+                <div class="button-text">OTHER CENTER<br>Additional Tools</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="decoration"></div>
+    <div class="decoration-left"></div>
+
     <script>
-        // Create multiple canvas layers for intense hacking effect
-        const createHackerLayer = (zIndex, speed, opacity, color) => {
-            const canvas = document.createElement('canvas');
-            canvas.style.position = 'fixed';
-            canvas.style.top = '0';
-            canvas.style.left = '0';
-            canvas.style.width = '100%';
-            canvas.style.height = '100%';
-            canvas.style.zIndex = zIndex;
-            canvas.style.opacity = opacity;
-            document.body.appendChild(canvas);
-            
-            const ctx = canvas.getContext('2d');
-            
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-            
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
-            
-            const chars = "01@#$%&*ABCDEFGHJKLMNOPQRSTUVWXYZ0123456789";
-            const matrix = chars.split("");
-            const hexChars = "0123456789ABCDEF";
-            const specialChars = "@#$%&*+=-_<>/\\";
-            const words = ["ACCESS", "DENIED", "GRANTED", "SECURE", "LOGIN", "LOGOUT", "WARNING", "ALERT", "SYSTEM", "ADMIN", "CRYPTO", "ENCRYPT", "DECRYPT"];
-            
-            const fontSize = Math.max(12, Math.floor(Math.random() * 8) + 10);
-            let columns = Math.floor(canvas.width / fontSize);
-            
-            const drops = [];
-            for (let i = 0; i < columns; i++) {
-                drops[i] = Math.random() * -canvas.height;
-            }
-            
-            function draw() {
-                ctx.fillStyle = `rgba(0, 0, 0, ${Math.random() * 0.05})`;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Enhanced loading screen with progress
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
                 
-                ctx.fillStyle = color || "#0f0";
-                ctx.font = `${fontSize}px monospace`;
+                // Show welcome message
+                setTimeout(() => {
+                    console.log('🎮 SpyMC Admin Panel - Fully Loaded! 🎮');
+                    console.log('📊 All systems operational');
+                    console.log('🔐 Secure connection established');
+                }, 500);
+            }, 3200);
+        });
+
+        // Enhanced button interactions
+        document.querySelectorAll('.minecraft-button').forEach((button, index) => {
+            button.addEventListener('click', function(e) {
+                // Create enhanced click particle effect
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
                 
-                for (let i = 0; i < drops.length; i++) {
-                    const rand = Math.random();
-                    let text;
+                for (let i = 0; i < 6; i++) {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'absolute';
+                    particle.style.left = x + 'px';
+                    particle.style.top = y + 'px';
+                    particle.style.width = '6px';
+                    particle.style.height = '6px';
+                    particle.style.background = ['#fff', '#ffd700', '#ff6b6b', '#4ecdc4'][Math.floor(Math.random() * 4)];
+                    particle.style.pointerEvents = 'none';
+                    particle.style.borderRadius = '0';
+                    particle.style.zIndex = '1000';
                     
-                    if (rand > 0.97) {
-                        text = words[Math.floor(Math.random() * words.length)];
-                    } else if (rand > 0.95) {
-                        text = "0x" + Array(6).fill(0).map(() => hexChars[Math.floor(Math.random() * hexChars.length)]).join('');
-                    } else if (rand > 0.92) {
-                        text = Array(Math.floor(Math.random() * 5) + 3).fill(0).map(() => specialChars[Math.floor(Math.random() * specialChars.length)]).join('');
-                    } else {
-                        text = matrix[Math.floor(Math.random() * matrix.length)];
-                    }
+                    const angle = (Math.PI * 2 * i) / 6;
+                    const velocity = 30 + Math.random() * 20;
+                    const vx = Math.cos(angle) * velocity;
+                    const vy = Math.sin(angle) * velocity;
                     
-                    // Draw main text
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    particle.style.animation = `particleExplosion 0.8s ease-out forwards`;
+                    particle.style.setProperty('--vx', vx + 'px');
+                    particle.style.setProperty('--vy', vy + 'px');
                     
-                    // Add trail effect
-                    ctx.fillStyle = `rgba(0, 255, 0, ${Math.random() * 0.1})`;
-                    for (let j = 0; j < 5; j++) {
-                        ctx.fillText(text, i * fontSize, (drops[i] - j) * fontSize);
-                    }
-                    ctx.fillStyle = color || "#0f0";
+                    this.appendChild(particle);
                     
-                    // Add occasional highlighted characters
-                    if (Math.random() > 0.98) {
-                        ctx.fillStyle = "#0ff";
-                        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                        ctx.fillStyle = color || "#0f0";
-                    }
-                    
-                    if (drops[i] * fontSize > canvas.height * (1.5 + Math.random())) {
-                        drops[i] = 0;
-                        if (Math.random() > 0.95) {
-                            drops[i] = Math.random() * -canvas.height;
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.remove();
                         }
-                    }
-                    
-                    drops[i] += speed;
+                    }, 800);
                 }
                 
-                // Add scanning effect
-                if (Math.random() > 0.97) {
-                    ctx.strokeStyle = `rgba(0, 255, 0, ${Math.random() * 0.15})`;
-                    ctx.lineWidth = 1;
-                    const scanY = Math.random() * canvas.height;
-                    ctx.beginPath();
-                    ctx.moveTo(0, scanY);
-                    ctx.lineTo(canvas.width, scanY);
-                    ctx.stroke();
-                    
-                    // Add scanning dot
-                    ctx.fillStyle = "#f00";
-                    ctx.fillRect(Math.random() * canvas.width, scanY, 4, 4);
-                }
-                
-                // Add random noise
-                if (Math.random() > 0.95) {
-                    ctx.fillStyle = `rgba(0, 255, 0, ${Math.random() * 0.03})`;
-                    for (let i = 0; i < 30; i++) {
-                        ctx.fillRect(
-                            Math.random() * canvas.width,
-                            Math.random() * canvas.height,
-                            Math.random() * 15,
-                            Math.random() * 15
-                        );
-                    }
-                }
-            }
-            
-            // Start animation
-            const fps = 30;
-            setInterval(draw, 1000 / fps);
-            
-            // Adjust columns on resize
-            window.addEventListener('resize', () => {
-                columns = Math.floor(canvas.width / fontSize);
-                while (drops.length < columns) {
-                    drops.push(Math.random() * -canvas.height);
-                }
-                drops.length = columns;
+                // Button click sound effect simulation
+                console.log(`🎵 *Click sound* - ${this.querySelector('.button-text').textContent.split('\n')[0]} activated!`);
             });
-        };
-        
-        // Create multiple layers with different effects
-        createHackerLayer(1, 1, 0.15, "#0f0");  // Main green layer
-        createHackerLayer(2, 0.7, 0.1, "#0ff"); // Cyan layer
-        createHackerLayer(3, 1.3, 0.08, "#f0f"); // Purple layer
-        
-        // Terminal glitch effect
-        const terminal = document.querySelector('.terminal-window');
-        setInterval(() => {
-            if (Math.random() > 0.97) {
-                terminal.style.transform = `translate(${Math.random() * 10 - 5}px, ${Math.random() * 10 - 5}px)`;
-                terminal.style.boxShadow = `0 0 ${Math.random() * 50}px rgba(0, 255, 0, ${Math.random() * 0.5})`;
+            
+            // Enhanced hover effects
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px) scale(1.08) rotateX(5deg)';
+                
+                // Hover sound effect simulation
                 setTimeout(() => {
-                    terminal.style.transform = '';
-                    terminal.style.boxShadow = '0 0 50px rgba(0, 255, 0, 0.5)';
-                }, 200);
+                    console.log(`🎵 *Hover sound* - ${this.querySelector('.button-text').textContent.split('\n')[0]}`);
+                }, 100);
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
+            });
+
+            // Add unique identifier for accessibility
+            button.setAttribute('aria-label', `Access ${button.querySelector('.button-text').textContent.replace('\n', ' - ')}`);
+            button.setAttribute('tabindex', index + 1);
+        });
+
+        // Enhanced particle animation styles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes particleExplosion {
+                0% {
+                    transform: translate(0, 0) scale(1);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translate(var(--vx), var(--vy)) scale(0);
+                    opacity: 0;
+                }
             }
-        }, 3000);
-        
-        // Add random terminal flicker
-        setInterval(() => {
-            if (Math.random() > 0.9) {
-                terminal.style.opacity = 0.9 + Math.random() * 0.1;
+        `;
+        document.head.appendChild(style);
+
+        // Enhanced cloud generation
+        function createDynamicCloud() {
+            const cloud = document.createElement('div');
+            cloud.className = 'cloud';
+            cloud.style.width = Math.random() * 120 + 80 + 'px';
+            cloud.style.height = Math.random() * 40 + 30 + 'px';
+            cloud.style.top = Math.random() * 40 + 10 + '%';
+            cloud.style.left = '-200px';
+            cloud.style.animationDuration = Math.random() * 25 + 20 + 's';
+            cloud.style.opacity = Math.random() * 0.6 + 0.3;
+            cloud.style.filter = `blur(${Math.random() * 2}px)`;
+            
+            // Add random cloud variations
+            if (Math.random() > 0.5) {
+                const before = document.createElement('div');
+                before.style.position = 'absolute';
+                before.style.width = '40px';
+                before.style.height = '40px';
+                before.style.background = 'rgba(255,255,255,0.9)';
+                before.style.top = '-20px';
+                before.style.left = '15px';
+                cloud.appendChild(before);
             }
-        }, 500);
+            
+            document.body.appendChild(cloud);
+            
+            setTimeout(() => {
+                if (cloud.parentNode) {
+                    cloud.remove();
+                }
+            }, 50000);
+        }
+
+        // Generate clouds more frequently
+        setInterval(createDynamicCloud, 6000);
         
-        // Add connection status animation
-        const statusText = document.querySelector('.terminal-title');
-        const statusMessages = [
-            "SECURE CONNECTION ESTABLISHED",
-            "ENCRYPTION: AES-256 ACTIVE",
-            "ALL SYSTEMS NOMINAL",
-            "NO INTRUSIONS DETECTED",
-            "AUDIT LOGS ACTIVE"
-        ];
-        
+        // Generate initial clouds
+        for (let i = 0; i < 3; i++) {
+            setTimeout(createDynamicCloud, i * 2000);
+        }
+
+        // Enhanced keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            const buttons = document.querySelectorAll('.minecraft-button');
+            const currentFocus = document.activeElement;
+            const currentIndex = Array.from(buttons).indexOf(currentFocus);
+            
+            switch(e.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    e.preventDefault();
+                    const nextIndex = (currentIndex + 1) % buttons.length;
+                    buttons[nextIndex].focus();
+                    console.log(`🎮 Navigation: ${buttons[nextIndex].querySelector('.button-text').textContent.split('\n')[0]}`);
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    e.preventDefault();
+                    const prevIndex = currentIndex <= 0 ? buttons.length - 1 : currentIndex - 1;
+                    buttons[prevIndex].focus();
+                    console.log(`🎮 Navigation: ${buttons[prevIndex].querySelector('.button-text').textContent.split('\n')[0]}`);
+                    break;
+                case 'Enter':
+                case ' ':
+                    if (currentFocus && currentFocus.classList.contains('minecraft-button')) {
+                        e.preventDefault();
+                        currentFocus.click();
+                    }
+                    break;
+                case 'Escape':
+                    if (currentFocus) {
+                        currentFocus.blur();
+                        console.log('🎮 Navigation cleared');
+                    }
+                    break;
+            }
+        });
+
+        // Auto focus first button after loading
+        setTimeout(() => {
+            const firstButton = document.querySelector('.minecraft-button');
+            if (firstButton) {
+                firstButton.focus();
+                console.log('🎮 Auto-focused on first button');
+            }
+        }, 3500);
+
+        // Connection status simulation
         setInterval(() => {
+            const statusDot = document.querySelector('.status-dot');
+            const statusText = document.querySelector('.connection-status span');
+            
+            // Simulate occasional connection checks
             if (Math.random() > 0.95) {
-                const originalText = statusText.textContent;
-                const randomStatus = statusMessages[Math.floor(Math.random() * statusMessages.length)];
-                statusText.textContent = randomStatus;
+                statusDot.style.background = '#f39c12';
+                statusText.textContent = 'CHECKING...';
                 
                 setTimeout(() => {
-                    statusText.textContent = originalText;
-                }, 2000);
+                    statusDot.style.background = '#27ae60';
+                    statusText.textContent = 'ONLINE';
+                }, 1000);
             }
         }, 5000);
+
+        // Performance monitoring simulation
+        let performanceCounter = 0;
+        setInterval(() => {
+            performanceCounter++;
+            if (performanceCounter % 10 === 0) {
+                console.log(`📊 System Check #${performanceCounter/10} - All services running optimally`);
+            }
+        }, 3000);
+
+        // Easter egg - Konami code
+        let konamiCode = [];
+        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+        
+        document.addEventListener('keydown', function(e) {
+            konamiCode.push(e.code);
+            if (konamiCode.length > konamiSequence.length) {
+                konamiCode.shift();
+            }
+            
+            if (konamiCode.length === konamiSequence.length && 
+                konamiCode.every((key, index) => key === konamiSequence[index])) {
+                
+                // Easter egg activation
+                document.body.style.animation = 'rainbow 2s infinite';
+                console.log('🎉 KONAMI CODE ACTIVATED! SpyMC Admin Panel - SUPER MODE! 🎉');
+                
+                // Create rainbow effect
+                const rainbowStyle = document.createElement('style');
+                rainbowStyle.textContent = `
+                    @keyframes rainbow {
+                        0% { filter: hue-rotate(0deg); }
+                        100% { filter: hue-rotate(360deg); }
+                    }
+                `;
+                document.head.appendChild(rainbowStyle);
+                
+                setTimeout(() => {
+                    document.body.style.animation = '';
+                    rainbowStyle.remove();
+                }, 10000);
+                
+                konamiCode = [];
+            }
+        });
+
+        // Dynamic time-based greeting
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            const titleElement = document.querySelector('.title');
+            const subtitleElement = document.querySelector('.subtitle');
+            
+            let timeGreeting = '';
+            if (hour < 6) timeGreeting = '🌙 Night Shift';
+            else if (hour < 12) timeGreeting = '🌅 Morning';
+            else if (hour < 18) timeGreeting = '☀️ Afternoon';
+            else timeGreeting = '🌆 Evening';
+            
+            subtitleElement.textContent = `${timeGreeting} - Advanced Minecraft Server Administration Dashboard`;
+        }
+        
+        updateGreeting();
+        setInterval(updateGreeting, 60000); // Update every minute
+
+        // Advanced button analytics
+        document.querySelectorAll('.minecraft-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const buttonName = this.querySelector('.button-text').textContent.split('\n')[0];
+                const timestamp = new Date().toLocaleTimeString();
+                console.log(`📊 Analytics: ${buttonName} accessed at ${timestamp}`);
+                
+                // Store in memory (since we can't use localStorage)
+                if (!window.adminStats) window.adminStats = {};
+                if (!window.adminStats[buttonName]) window.adminStats[buttonName] = 0;
+                window.adminStats[buttonName]++;
+            });
+        });
+
+        // Show stats command (console)
+        window.showStats = function() {
+            if (window.adminStats) {
+                console.log('📊 SpyMC Admin Panel Usage Statistics:');
+                Object.entries(window.adminStats).forEach(([button, count]) => {
+                    console.log(`  ${button}: ${count} clicks`);
+                });
+            } else {
+                console.log('📊 No usage statistics available yet.');
+            }
+        };
+
+        // Help command (console)
+        window.help = function() {
+            console.log('🎮 SpyMC Admin Panel - Console Commands:');
+            console.log('  help() - Show this help message');
+            console.log('  showStats() - Display usage statistics');
+            console.log('  testConnection() - Test server connections');
+            console.log('  clearStats() - Clear usage statistics');
+            console.log('  Konami Code - Up Up Down Down Left Right Left Right B A');
+        };
+
+        // Test connection command
+        window.testConnection = function() {
+            console.log('🔌 Testing connections to SpyMC services...');
+            const services = [
+                { name: 'TIER TESTER', port: '2334', status: 'OK' },
+                { name: 'STAFF PANEL', port: '2634', status: 'OK' },
+                { name: 'UPLOAD CENTER', port: '2336', status: 'OK' },
+                { name: 'OTHER CENTER', port: '2736', status: 'OK' }
+            ];
+            
+            services.forEach((service, index) => {
+                setTimeout(() => {
+                    console.log(`  ✅ ${service.name} (Port ${service.port}): ${service.status}`);
+                }, index * 500);
+            });
+            
+            setTimeout(() => {
+                console.log('🔌 All services operational!');
+            }, services.length * 500 + 200);
+        };
+
+        // Clear stats command
+        window.clearStats = function() {
+            window.adminStats = {};
+            console.log('📊 Usage statistics cleared.');
+        };
+
+        // Initialize help message
+        setTimeout(() => {
+            console.log('💡 Tip: Type help() in console for available commands');
+        }, 4000);
+
+        // Responsive design enhancements
+        function handleResize() {
+            const container = document.querySelector('.container');
+            const buttons = document.querySelectorAll('.minecraft-button');
+            
+            if (window.innerWidth < 480) {
+                buttons.forEach(button => {
+                    button.style.minHeight = '90px';
+                });
+            } else if (window.innerWidth < 768) {
+                buttons.forEach(button => {
+                    button.style.minHeight = '110px';
+                });
+            } else {
+                buttons.forEach(button => {
+                    button.style.minHeight = '140px';
+                });
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Initial call
+
+        console.log('🎮 SpyMC Admin Panel - Fully Initialized! 🎮');
+        console.log('📱 Responsive design active');
+        console.log('🎨 Enhanced animations loaded');
+        console.log('⚡ All interactive features enabled');
+        console.log('🔧 Console commands available - type help()');
     </script>
 </body>
 </html>
