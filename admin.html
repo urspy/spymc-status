@@ -2,68 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SPYMC ADMIN PANEL</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
 
         body {
             font-family: 'Courier New', monospace;
             background-color: #000;
             color: #0f0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
             position: relative;
+            line-height: 1.5;
+            overflow: auto;
         }
 
-        .container {
-            text-align: center;
-            max-width: 900px;
-            padding: 2rem;
-            position: relative;
-            z-index: 10;
+        .terminal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            pointer-events: none;
         }
 
         .terminal-window {
-            background: rgba(0, 10, 0, 0.8);
+            background: rgba(0, 5, 0, 0.85);
             border: 1px solid #0f0;
-            border-radius: 5px;
-            padding: 2rem;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
-            backdrop-filter: blur(5px);
+            box-shadow: 0 0 50px rgba(0, 255, 0, 0.5);
+            backdrop-filter: blur(3px);
             position: relative;
-            overflow: hidden;
+            overflow: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-height: 100vh;
+            pointer-events: auto;
         }
 
-        .terminal-window::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #0f0, transparent);
-            animation: scanline 3s linear infinite;
+        .terminal-window::-webkit-scrollbar {
+            width: 8px;
         }
 
-        @keyframes scanline {
-            0% { top: 0; }
-            100% { top: 100%; }
+        .terminal-window::-webkit-scrollbar-track {
+            background: rgba(0, 20, 0, 0.3);
+        }
+
+        .terminal-window::-webkit-scrollbar-thumb {
+            background: #0f0;
+            border-radius: 4px;
         }
 
         .terminal-header {
             display: flex;
             align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
+            padding: 1rem;
             border-bottom: 1px solid #0f0;
+            position: sticky;
+            top: 0;
+            background: rgba(0, 10, 0, 0.9);
+            z-index: 10;
         }
 
         .dots {
@@ -75,73 +87,89 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
+            box-shadow: 0 0 5px currentColor;
         }
 
-        .dot.red { background: #f00; }
-        .dot.yellow { background: #ff0; }
-        .dot.green { background: #0f0; }
+        .dot.red { background: #f00; color: #f00; }
+        .dot.yellow { background: #ff0; color: #ff0; }
+        .dot.green { background: #0f0; color: #0f0; }
 
         .terminal-title {
             flex: 1;
             text-align: center;
             color: #0f0;
-            font-size: 0.9rem;
-            text-shadow: 0 0 5px #0f0;
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
+            text-shadow: 0 0 10px #0f0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .terminal-content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .ascii-art {
-            font-size: 0.7rem;
-            line-height: 1;
+            font-size: clamp(0.6rem, 2.5vw, 0.8rem);
+            line-height: 1.2;
             color: #0f0;
             margin-bottom: 2rem;
             white-space: pre;
-            text-shadow: 0 0 5px #0f0;
+            text-shadow: 0 0 10px #0f0;
+            text-align: center;
         }
 
         .main-text {
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 3vw, 1.2rem);
             margin-bottom: 1.5rem;
             color: #0f0;
+            text-align: center;
         }
 
         .main-text .highlight {
             color: #0ff;
             font-weight: bold;
-            text-shadow: 0 0 5px #0ff;
+            text-shadow: 0 0 10px #0ff;
         }
 
         .purpose {
-            font-size: 0.9rem;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
             color: #0a0;
             margin-bottom: 2rem;
             line-height: 1.6;
+            text-align: center;
         }
 
         .link {
             color: #0f0;
             text-decoration: none;
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
             border: 1px solid #0f0;
-            padding: 0.5rem 1.5rem;
+            padding: 0.8rem 1.8rem;
             border-radius: 3px;
             transition: all 0.3s ease;
             display: inline-block;
             margin: 0.5rem;
             background: rgba(0, 30, 0, 0.3);
             text-shadow: 0 0 5px #0f0;
+            text-align: center;
         }
 
         .link:hover {
             background: #0f0;
             color: #000;
-            box-shadow: 0 0 15px #0f0;
+            box-shadow: 0 0 20px #0f0;
+            transform: translateY(-2px);
         }
 
         .admin-panel {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2.5rem 0;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
         }
 
         .admin-section {
@@ -149,9 +177,12 @@
             border: 1px solid rgba(0, 255, 0, 0.3);
             border-radius: 3px;
             transition: all 0.3s ease;
-            background: rgba(0, 20, 0, 0.2);
+            background: rgba(0, 20, 0, 0.3);
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
         }
 
         .admin-section::before {
@@ -172,7 +203,7 @@
 
         .admin-section:hover {
             border-color: #0f0;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
         }
 
         .admin-section:hover::before {
@@ -188,23 +219,25 @@
         .admin-title {
             color: #0ff;
             margin-bottom: 1rem;
-            font-size: 1.1rem;
-            text-shadow: 0 0 5px #0ff;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            text-shadow: 0 0 10px #0ff;
         }
 
         .admin-desc {
-            font-size: 0.85rem;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
             color: #0a0;
             margin-bottom: 1.5rem;
+            flex: 1;
         }
 
         .cursor {
             display: inline-block;
             background: #0f0;
-            width: 2px;
+            width: 3px;
             height: 1.2em;
-            animation: blink 1s infinite;
-            margin-left: 0.2rem;
+            animation: blink 0.8s infinite;
+            margin-left: 0.3rem;
+            vertical-align: middle;
         }
 
         @keyframes blink {
@@ -212,40 +245,99 @@
             51%, 100% { opacity: 0; }
         }
 
-        /* Hacker background animation */
-        .hacker-bg {
+        .footer {
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.7rem;
+            color: #030;
+            margin-top: auto;
+        }
+
+        /* Scanline effect */
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(0, 255, 0, 0.05) 50%,
+                transparent 100%
+            );
+            background-size: 100% 8px;
+            pointer-events: none;
+            z-index: 100;
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+
+        /* Glitch effect */
+        .glitch {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
-            opacity: 0.15;
+            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAEklEQVQImWNgYGD4z0AswK4SAFXuAf8EPy+xAAAAAElFTkSuQmCC') repeat;
+            opacity: 0.02;
+            pointer-events: none;
+            z-index: 101;
+            animation: glitch 10s infinite linear;
         }
 
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-5px, 5px); }
+            40% { transform: translate(-5px, -5px); }
+            60% { transform: translate(5px, 5px); }
+            80% { transform: translate(5px, -5px); }
+            100% { transform: translate(0); }
+        }
+
+        /* Responsive adjustments */
         @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            
-            .terminal-window {
-                padding: 1.5rem;
-            }
-            
-            .ascii-art {
-                font-size: 0.6rem;
+            .terminal-overlay {
+                padding: 0.5rem;
             }
             
             .admin-panel {
                 grid-template-columns: 1fr;
             }
+            
+            .link {
+                padding: 0.7rem 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .terminal-header {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 0.8rem;
+            }
+            
+            .terminal-title {
+                order: -1;
+                margin-bottom: 0.5rem;
+            }
+            
+            .terminal-content {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <canvas class="hacker-bg" id="hackerBg"></canvas>
+    <div class="glitch"></div>
+    <div class="scanline"></div>
     
-    <div class="container">
+    <div class="terminal-overlay">
         <div class="terminal-window">
             <div class="terminal-header">
                 <div class="dots">
@@ -253,10 +345,11 @@
                     <div class="dot yellow"></div>
                     <div class="dot green"></div>
                 </div>
-                <div class="terminal-title">root@spymc:~# admin_panel --access-level=5</div>
+                <div class="terminal-title">root@spymc:~# admin_panel --access-level=5 --secure --fullscreen</div>
             </div>
             
-            <div class="ascii-art">
+            <div class="terminal-content">
+                <div class="ascii-art">
    _____ _____ _   _ ____  _____ 
   / ____|  __ \ \ | |  _ \|  __ \
  | (___ | |__) | \| | |_) | |  | |
@@ -265,134 +358,219 @@
  |_____/|_|    |_| \_|____/|_____/
                                   
     S P Y M C   A D M I N   P A N E L
-            </div>
-            
-            <p class="main-text">
-                <span class="highlight">DISCORD SERVER:</span> www.spymc.xyz/discord<span class="cursor"></span>
-            </p>
-            
-            <p class="purpose">
-                [ WARNING: RESTRICTED ACCESS - AUTHORIZED PERSONNEL ONLY ]<br>
-                [ ALL ACTIONS ARE LOGGED AND MONITORED ]
-            </p>
-            
-            <div class="admin-panel">
-                <div class="admin-section">
-                    <div class="admin-title">TIER TESTER</div>
-                    <div class="admin-desc">Manage user access levels and permissions. Verify tier qualifications and adjust privileges.</div>
-                    <a href="#" class="link">ACCESS TERMINAL</a>
                 </div>
                 
-                <div class="admin-section">
-                    <div class="admin-title">STAFF MANAGEMENT</div>
-                    <div class="admin-desc">Handle staff roles, permissions, and oversight. Audit logs and activity reports.</div>
-                    <a href="#" class="link">ACCESS TERMINAL</a>
+                <p class="main-text">
+                    <span class="highlight">DISCORD SERVER:</span> www.spymc.xyz/discord<span class="cursor"></span>
+                </p>
+                
+                <p class="purpose">
+                    [ WARNING: RESTRICTED ACCESS - AUTHORIZED PERSONNEL ONLY ]<br>
+                    [ ALL ACTIONS ARE LOGGED AND MONITORED ]<br>
+                    [ SECURE CONNECTION: ENCRYPTION ACTIVE ]
+                </p>
+                
+                <div class="admin-panel">
+                    <div class="admin-section">
+                        <div class="admin-title">TIER TESTER</div>
+                        <div class="admin-desc">Manage user access levels and permissions. Verify tier qualifications and adjust privileges. Full audit logging enabled with real-time monitoring.</div>
+                        <a href="htts://spy.info.gf:2334" class="link">ACCESS TERMINAL</a>
+                    </div>
+                    
+                    <div class="admin-section">
+                        <div class="admin-title">STAFF MANAGEMENT</div>
+                        <div class="admin-desc">Handle staff roles, permissions, and oversight. Audit logs and activity reports. Secure biometric authentication required.</div>
+                        <a href="htts://spy.info.gf:2634" class="link">ACCESS TERMINAL</a>
+                    </div>
+                    
+                    <div class="admin-section">
+                        <div class="admin-title">UPLOAD CENTER</div>
+                        <div class="admin-desc">Secure file transfer and management system. Monitor uploads and scans. Military-grade encryption protocol active.</div>
+                        <a href="htts://spy.info.gf:2336" class="link">ACCESS TERMINAL</a>
+                    </div>
                 </div>
                 
-                <div class="admin-section">
-                    <div class="admin-title">UPLOAD CENTER</div>
-                    <div class="admin-desc">Secure file transfer and management system. Monitor uploads and scans.</div>
-                    <a href="#" class="link">ACCESS TERMINAL</a>
+                <div class="footer">
+                    SPYMC ADMIN PANEL v4.2.0 | SECURE CONNECTION ESTABLISHED | © 2023 SPYMC NETWORKS
                 </div>
             </div>
-            
-            <a href="https://www.spymc.xyz/discord" class="link">
-                ← RETURN TO MAIN SERVER
-            </a>
         </div>
     </div>
 
     <script>
-        // Enhanced hacker background animation
-        const canvas = document.getElementById('hackerBg');
-        const ctx = canvas.getContext('2d');
-        
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        const chars = "01";
-        const matrix = chars.split("");
-        
-        const fontSize = 12;
-        const columns = canvas.width / fontSize;
-        
-        const drops = [];
-        for (let i = 0; i < columns; i++) {
-            drops[i] = Math.random() * -100;
-        }
-        
-        // Add hex codes and special characters
-        const hexChars = "0123456789ABCDEF";
-        const specialChars = "@#$%&*+=-_";
-        
-        function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Create multiple canvas layers for intense hacking effect
+        const createHackerLayer = (zIndex, speed, opacity, color) => {
+            const canvas = document.createElement('canvas');
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.zIndex = zIndex;
+            canvas.style.opacity = opacity;
+            document.body.appendChild(canvas);
             
-            ctx.fillStyle = "#0f0";
-            ctx.font = fontSize + "px monospace";
+            const ctx = canvas.getContext('2d');
             
-            for (let i = 0; i < drops.length; i++) {
-                // Randomly switch between different character sets
-                let text;
-                const rand = Math.random();
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            
+            const chars = "01@#$%&*ABCDEFGHJKLMNOPQRSTUVWXYZ0123456789";
+            const matrix = chars.split("");
+            const hexChars = "0123456789ABCDEF";
+            const specialChars = "@#$%&*+=-_<>/\\";
+            const words = ["ACCESS", "DENIED", "GRANTED", "SECURE", "LOGIN", "LOGOUT", "WARNING", "ALERT", "SYSTEM", "ADMIN", "CRYPTO", "ENCRYPT", "DECRYPT"];
+            
+            const fontSize = Math.max(12, Math.floor(Math.random() * 8) + 10);
+            let columns = Math.floor(canvas.width / fontSize);
+            
+            const drops = [];
+            for (let i = 0; i < columns; i++) {
+                drops[i] = Math.random() * -canvas.height;
+            }
+            
+            function draw() {
+                ctx.fillStyle = `rgba(0, 0, 0, ${Math.random() * 0.05})`;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
-                if (rand > 0.95) {
-                    // Occasionally show hex codes
-                    text = "0x" + Array(4).fill(0).map(() => hexChars[Math.floor(Math.random() * hexChars.length)]).join('');
-                } else if (rand > 0.9) {
-                    // Or special characters
-                    text = specialChars[Math.floor(Math.random() * specialChars.length)];
-                } else {
-                    // Mostly binary
-                    text = matrix[Math.floor(Math.random() * matrix.length)];
-                }
+                ctx.fillStyle = color || "#0f0";
+                ctx.font = `${fontSize}px monospace`;
                 
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                
-                // Add occasional highlighted characters
-                if (Math.random() > 0.98) {
-                    ctx.fillStyle = "#0ff";
+                for (let i = 0; i < drops.length; i++) {
+                    const rand = Math.random();
+                    let text;
+                    
+                    if (rand > 0.97) {
+                        text = words[Math.floor(Math.random() * words.length)];
+                    } else if (rand > 0.95) {
+                        text = "0x" + Array(6).fill(0).map(() => hexChars[Math.floor(Math.random() * hexChars.length)]).join('');
+                    } else if (rand > 0.92) {
+                        text = Array(Math.floor(Math.random() * 5) + 3).fill(0).map(() => specialChars[Math.floor(Math.random() * specialChars.length)]).join('');
+                    } else {
+                        text = matrix[Math.floor(Math.random() * matrix.length)];
+                    }
+                    
+                    // Draw main text
                     ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                    ctx.fillStyle = "#0f0";
+                    
+                    // Add trail effect
+                    ctx.fillStyle = `rgba(0, 255, 0, ${Math.random() * 0.1})`;
+                    for (let j = 0; j < 5; j++) {
+                        ctx.fillText(text, i * fontSize, (drops[i] - j) * fontSize);
+                    }
+                    ctx.fillStyle = color || "#0f0";
+                    
+                    // Add occasional highlighted characters
+                    if (Math.random() > 0.98) {
+                        ctx.fillStyle = "#0ff";
+                        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                        ctx.fillStyle = color || "#0f0";
+                    }
+                    
+                    if (drops[i] * fontSize > canvas.height * (1.5 + Math.random())) {
+                        drops[i] = 0;
+                        if (Math.random() > 0.95) {
+                            drops[i] = Math.random() * -canvas.height;
+                        }
+                    }
+                    
+                    drops[i] += speed;
                 }
                 
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
+                // Add scanning effect
+                if (Math.random() > 0.97) {
+                    ctx.strokeStyle = `rgba(0, 255, 0, ${Math.random() * 0.15})`;
+                    ctx.lineWidth = 1;
+                    const scanY = Math.random() * canvas.height;
+                    ctx.beginPath();
+                    ctx.moveTo(0, scanY);
+                    ctx.lineTo(canvas.width, scanY);
+                    ctx.stroke();
+                    
+                    // Add scanning dot
+                    ctx.fillStyle = "#f00";
+                    ctx.fillRect(Math.random() * canvas.width, scanY, 4, 4);
                 }
                 
-                drops[i]++;
+                // Add random noise
+                if (Math.random() > 0.95) {
+                    ctx.fillStyle = `rgba(0, 255, 0, ${Math.random() * 0.03})`;
+                    for (let i = 0; i < 30; i++) {
+                        ctx.fillRect(
+                            Math.random() * canvas.width,
+                            Math.random() * canvas.height,
+                            Math.random() * 15,
+                            Math.random() * 15
+                        );
+                    }
+                }
             }
             
-            // Add occasional scanning effect
-            if (Math.random() > 0.97) {
-                ctx.strokeStyle = "rgba(0, 255, 0, 0.2)";
-                ctx.lineWidth = 1;
-                const scanY = Math.random() * canvas.height;
-                ctx.beginPath();
-                ctx.moveTo(0, scanY);
-                ctx.lineTo(canvas.width, scanY);
-                ctx.stroke();
-            }
-        }
+            // Start animation
+            const fps = 30;
+            setInterval(draw, 1000 / fps);
+            
+            // Adjust columns on resize
+            window.addEventListener('resize', () => {
+                columns = Math.floor(canvas.width / fontSize);
+                while (drops.length < columns) {
+                    drops.push(Math.random() * -canvas.height);
+                }
+                drops.length = columns;
+            });
+        };
         
-        setInterval(draw, 50);
+        // Create multiple layers with different effects
+        createHackerLayer(1, 1, 0.15, "#0f0");  // Main green layer
+        createHackerLayer(2, 0.7, 0.1, "#0ff"); // Cyan layer
+        createHackerLayer(3, 1.3, 0.08, "#f0f"); // Purple layer
         
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-        
-        // Add occasional glitch effect to the terminal
+        // Terminal glitch effect
         const terminal = document.querySelector('.terminal-window');
         setInterval(() => {
-            if (Math.random() > 0.95) {
-                terminal.style.transform = 'translateX(' + (Math.random() * 6 - 3) + 'px)';
+            if (Math.random() > 0.97) {
+                terminal.style.transform = `translate(${Math.random() * 10 - 5}px, ${Math.random() * 10 - 5}px)`;
+                terminal.style.boxShadow = `0 0 ${Math.random() * 50}px rgba(0, 255, 0, ${Math.random() * 0.5})`;
                 setTimeout(() => {
-                    terminal.style.transform = 'translateX(0)';
-                }, 100);
+                    terminal.style.transform = '';
+                    terminal.style.boxShadow = '0 0 50px rgba(0, 255, 0, 0.5)';
+                }, 200);
             }
         }, 3000);
+        
+        // Add random terminal flicker
+        setInterval(() => {
+            if (Math.random() > 0.9) {
+                terminal.style.opacity = 0.9 + Math.random() * 0.1;
+            }
+        }, 500);
+        
+        // Add connection status animation
+        const statusText = document.querySelector('.terminal-title');
+        const statusMessages = [
+            "SECURE CONNECTION ESTABLISHED",
+            "ENCRYPTION: AES-256 ACTIVE",
+            "ALL SYSTEMS NOMINAL",
+            "NO INTRUSIONS DETECTED",
+            "AUDIT LOGS ACTIVE"
+        ];
+        
+        setInterval(() => {
+            if (Math.random() > 0.95) {
+                const originalText = statusText.textContent;
+                const randomStatus = statusMessages[Math.floor(Math.random() * statusMessages.length)];
+                statusText.textContent = randomStatus;
+                
+                setTimeout(() => {
+                    statusText.textContent = originalText;
+                }, 2000);
+            }
+        }, 5000);
     </script>
 </body>
 </html>
