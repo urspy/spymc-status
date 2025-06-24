@@ -15,8 +15,8 @@
         body {
             font-family: 'Press Start 2P', cursive;
             background: linear-gradient(135deg, #2c3e50, #3498db, #1abc9c, #27ae60);
-            background-size: 600% 600%;
-            animation: gradientShift 12s ease infinite;
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease-in-out infinite;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -27,11 +27,8 @@
         }
 
         @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            25% { background-position: 100% 50%; }
-            50% { background-position: 100% 100%; }
-            75% { background-position: 0% 100%; }
-            100% { background-position: 0% 50%; }
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         /* Minecraft-style animated background blocks */
@@ -47,25 +44,27 @@
 
         .block {
             position: absolute;
-            width: 40px;
-            height: 40px;
-            opacity: 0.1;
-            animation: blockFloat 15s infinite linear;
+            width: 30px;
+            height: 30px;
+            opacity: 0.08;
+            animation: blockFloat 25s infinite linear;
             image-rendering: pixelated;
         }
 
-        .block:nth-child(1) { background: #8B4513; left: 10%; animation-delay: 0s; }
-        .block:nth-child(2) { background: #228B22; left: 20%; animation-delay: -2s; }
-        .block:nth-child(3) { background: #4169E1; left: 30%; animation-delay: -4s; }
-        .block:nth-child(4) { background: #DC143C; left: 40%; animation-delay: -6s; }
-        .block:nth-child(5) { background: #FF8C00; left: 50%; animation-delay: -8s; }
-        .block:nth-child(6) { background: #9370DB; left: 60%; animation-delay: -10s; }
-        .block:nth-child(7) { background: #20B2AA; left: 70%; animation-delay: -12s; }
-        .block:nth-child(8) { background: #FFD700; left: 80%; animation-delay: -14s; }
+        .block:nth-child(1) { background: #8B4513; left: 5%; animation-delay: 0s; }
+        .block:nth-child(2) { background: #228B22; left: 15%; animation-delay: -3s; }
+        .block:nth-child(3) { background: #4169E1; left: 25%; animation-delay: -6s; }
+        .block:nth-child(4) { background: #DC143C; left: 35%; animation-delay: -9s; }
+        .block:nth-child(5) { background: #FF8C00; left: 45%; animation-delay: -12s; }
+        .block:nth-child(6) { background: #9370DB; left: 55%; animation-delay: -15s; }
+        .block:nth-child(7) { background: #20B2AA; left: 65%; animation-delay: -18s; }
+        .block:nth-child(8) { background: #FFD700; left: 75%; animation-delay: -21s; }
 
         @keyframes blockFloat {
-            0% { transform: translateY(100vh) rotate(0deg); }
-            100% { transform: translateY(-100px) rotate(360deg); }
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.08; }
+            90% { opacity: 0.08; }
+            100% { transform: translateY(-50px) rotate(180deg); opacity: 0; }
         }
 
         /* Enhanced clouds */
@@ -86,55 +85,57 @@
         }
 
         .cloud1 {
-            width: 120px;
-            height: 50px;
-            top: 15%;
-            left: -120px;
-            animation-duration: 30s;
+            width: 100px;
+            height: 40px;
+            top: 12%;
+            left: -100px;
+            animation-duration: 40s;
         }
 
         .cloud1::before {
-            width: 60px;
-            height: 60px;
-            top: -30px;
-            left: 15px;
-        }
-
-        .cloud1::after {
-            width: 80px;
-            height: 30px;
-            top: -20px;
-            right: 20px;
-        }
-
-        .cloud2 {
-            width: 100px;
-            height: 40px;
-            top: 25%;
-            left: -100px;
-            animation-duration: 35s;
-            animation-delay: -15s;
-        }
-
-        .cloud2::before {
             width: 50px;
             height: 50px;
             top: -25px;
-            left: 20px;
+            left: 12px;
+        }
+
+        .cloud1::after {
+            width: 60px;
+            height: 25px;
+            top: -15px;
+            right: 15px;
+        }
+
+        .cloud2 {
+            width: 80px;
+            height: 30px;
+            top: 20%;
+            left: -80px;
+            animation-duration: 45s;
+            animation-delay: -20s;
+        }
+
+        .cloud2::before {
+            width: 40px;
+            height: 40px;
+            top: -20px;
+            left: 15px;
         }
 
         .cloud3 {
             width: 90px;
             height: 35px;
-            top: 35%;
+            top: 28%;
             left: -90px;
-            animation-duration: 28s;
-            animation-delay: -8s;
+            animation-duration: 50s;
+            animation-delay: -35s;
         }
 
         @keyframes float {
-            from { transform: translateX(0); }
-            to { transform: translateX(calc(100vw + 200px)); }
+            0% { transform: translateX(0); opacity: 0; }
+            5% { opacity: 0.6; }
+            95% { opacity: 0.6; }
+            100% { transform: translateX(calc(100vw + 150px)); opacity: 0; }
         }
 
         .container {
@@ -162,17 +163,18 @@
         .header::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent);
-            animation: shimmer 3s infinite;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent, rgba(255,255,255,0.05));
+            animation: headerShimmer 8s ease-in-out infinite;
+            z-index: 1;
         }
 
-        @keyframes shimmer {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        @keyframes headerShimmer {
+            0%, 100% { opacity: 0.3; transform: translateX(-100%); }
+            50% { opacity: 0.6; transform: translateX(100%); }
         }
 
         .title {
@@ -180,18 +182,28 @@
             font-size: clamp(18px, 5vw, 36px);
             margin-bottom: 15px;
             text-shadow: 
-                3px 3px 0px #2c3e50, 
-                6px 6px 0px rgba(44, 62, 80, 0.7),
-                0 0 30px rgba(52, 152, 219, 0.5);
+                2px 2px 0px #2c3e50, 
+                4px 4px 0px rgba(44, 62, 80, 0.7),
+                0 0 20px rgba(52, 152, 219, 0.3);
             letter-spacing: 2px;
-            animation: titlePulse 3s ease-in-out infinite alternate;
+            animation: titleGlow 4s ease-in-out infinite alternate;
             position: relative;
             z-index: 2;
         }
 
-        @keyframes titlePulse {
-            from { transform: scale(1); text-shadow: 3px 3px 0px #2c3e50, 6px 6px 0px rgba(44, 62, 80, 0.7), 0 0 30px rgba(52, 152, 219, 0.5); }
-            to { transform: scale(1.05); text-shadow: 3px 3px 0px #2c3e50, 6px 6px 0px rgba(44, 62, 80, 0.7), 0 0 40px rgba(52, 152, 219, 0.8); }
+        @keyframes titleGlow {
+            0% { 
+                text-shadow: 
+                    2px 2px 0px #2c3e50, 
+                    4px 4px 0px rgba(44, 62, 80, 0.7),
+                    0 0 20px rgba(52, 152, 219, 0.3);
+            }
+            100% { 
+                text-shadow: 
+                    2px 2px 0px #2c3e50, 
+                    4px 4px 0px rgba(44, 62, 80, 0.7),
+                    0 0 30px rgba(52, 152, 219, 0.6);
+            }
         }
 
         .subtitle {
@@ -220,12 +232,12 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            animation: statusBlink 2s infinite;
+            animation: statusPulse 3s ease-in-out infinite;
         }
 
-        @keyframes statusBlink {
-            0%, 90% { opacity: 1; }
-            95% { opacity: 0.3; }
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
 
         .button-grid {
@@ -301,13 +313,13 @@
         .button-icon {
             font-size: clamp(20px, 5vw, 32px);
             margin-bottom: 10px;
-            filter: drop-shadow(3px 3px 0px rgba(0,0,0,0.7));
-            animation: iconFloat 3s ease-in-out infinite alternate;
+            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.7));
+            animation: iconBreathe 5s ease-in-out infinite;
         }
 
-        @keyframes iconFloat {
-            from { transform: translateY(0px); }
-            to { transform: translateY(-3px); }
+        @keyframes iconBreathe {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-2px) scale(1.05); }
         }
 
         .button-text {
@@ -389,46 +401,45 @@
             position: absolute;
             bottom: 30px;
             right: 30px;
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             background: 
                 repeating-linear-gradient(
                     90deg,
-                    #8B4513 0px, #8B4513 20px,
-                    #A0522D 20px, #A0522D 40px
+                    #8B4513 0px, #8B4513 15px,
+                    #A0522D 15px, #A0522D 30px
                 ),
                 repeating-linear-gradient(
                     0deg,
-                    #8B4513 0px, #8B4513 20px,
-                    #A0522D 20px, #A0522D 40px
+                    #8B4513 0px, #8B4513 15px,
+                    #A0522D 15px, #A0522D 30px
                 );
             image-rendering: pixelated;
-            opacity: 0.4;
-            animation: decorationRotate 15s linear infinite;
-            box-shadow: 0 0 20px rgba(139, 69, 19, 0.3);
+            opacity: 0.3;
+            animation: decorationSpin 20s linear infinite;
+            box-shadow: 0 0 15px rgba(139, 69, 19, 0.2);
         }
 
-        @keyframes decorationRotate {
-            from { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.1); }
-            100% { transform: rotate(360deg) scale(1); }
+        @keyframes decorationSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .decoration-left {
             position: absolute;
             bottom: 30px;
             left: 30px;
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             background: linear-gradient(45deg, #3498db, #2980b9);
-            opacity: 0.3;
-            animation: decorationPulse 4s ease-in-out infinite;
+            opacity: 0.25;
+            animation: decorationFloat 6s ease-in-out infinite;
             image-rendering: pixelated;
         }
 
-        @keyframes decorationPulse {
-            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.3; }
-            50% { transform: scale(1.2) rotate(45deg); opacity: 0.6; }
+        @keyframes decorationFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.25; }
+            50% { transform: translateY(-10px) rotate(180deg); opacity: 0.4; }
         }
 
         /* Enhanced loading animation */
@@ -507,12 +518,12 @@
             width: 8px;
             height: 8px;
             background: #27ae60;
-            animation: statusPulse 2s infinite;
+            animation: dotPulse 4s ease-in-out infinite;
         }
 
-        @keyframes statusPulse {
+        @keyframes dotPulse {
             0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
+            50% { opacity: 0.6; transform: scale(0.9); }
         }
     </style>
 </head>
@@ -652,16 +663,11 @@
             
             // Enhanced hover effects
             button.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-4px) scale(1.08) rotateX(5deg)';
-                
-                // Hover sound effect simulation
-                setTimeout(() => {
-                    console.log(`🎵 *Hover sound* - ${this.querySelector('.button-text').textContent.split('\n')[0]}`);
-                }, 100);
+                this.style.transform = 'translateY(-3px) scale(1.05)';
             });
             
             button.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
+                this.style.transform = 'translateY(0) scale(1)';
             });
 
             // Add unique identifier for accessibility
@@ -689,25 +695,13 @@
         function createDynamicCloud() {
             const cloud = document.createElement('div');
             cloud.className = 'cloud';
-            cloud.style.width = Math.random() * 120 + 80 + 'px';
-            cloud.style.height = Math.random() * 40 + 30 + 'px';
-            cloud.style.top = Math.random() * 40 + 10 + '%';
-            cloud.style.left = '-200px';
-            cloud.style.animationDuration = Math.random() * 25 + 20 + 's';
-            cloud.style.opacity = Math.random() * 0.6 + 0.3;
-            cloud.style.filter = `blur(${Math.random() * 2}px)`;
-            
-            // Add random cloud variations
-            if (Math.random() > 0.5) {
-                const before = document.createElement('div');
-                before.style.position = 'absolute';
-                before.style.width = '40px';
-                before.style.height = '40px';
-                before.style.background = 'rgba(255,255,255,0.9)';
-                before.style.top = '-20px';
-                before.style.left = '15px';
-                cloud.appendChild(before);
-            }
+            cloud.style.width = Math.random() * 80 + 60 + 'px';
+            cloud.style.height = Math.random() * 25 + 20 + 'px';
+            cloud.style.top = Math.random() * 35 + 8 + '%';
+            cloud.style.left = '-150px';
+            cloud.style.animationDuration = Math.random() * 25 + 35 + 's';
+            cloud.style.opacity = Math.random() * 0.4 + 0.3;
+            cloud.style.animationName = 'float';
             
             document.body.appendChild(cloud);
             
@@ -715,15 +709,15 @@
                 if (cloud.parentNode) {
                     cloud.remove();
                 }
-            }, 50000);
+            }, 65000);
         }
 
-        // Generate clouds more frequently
-        setInterval(createDynamicCloud, 6000);
+        // Generate clouds more consistently
+        setInterval(createDynamicCloud, 12000);
         
-        // Generate initial clouds
-        for (let i = 0; i < 3; i++) {
-            setTimeout(createDynamicCloud, i * 2000);
+        // Generate initial clouds with staggered timing
+        for (let i = 0; i < 2; i++) {
+            setTimeout(createDynamicCloud, i * 6000);
         }
 
         // Enhanced keyboard navigation
