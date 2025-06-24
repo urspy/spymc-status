@@ -788,7 +788,7 @@
         setInterval(() => {
             performanceCounter++;
             if (performanceCounter % 10 === 0) {
-                console.log(`📊 System Check #${performanceCounter/10} - All services running optimally`);
+                console.log(`System Check #${performanceCounter/10} - All services running optimally`);
             }
         }, 3000);
 
@@ -807,7 +807,7 @@
                 
                 // Easter egg activation
                 document.body.style.animation = 'rainbow 2s infinite';
-                console.log('🎉 KONAMI CODE ACTIVATED! SpyMC Admin Panel - SUPER MODE! 🎉');
+                console.log('KONAMI CODE ACTIVATED! SpyMC Admin Panel - SUPER MODE!');
                 
                 // Create rainbow effect
                 const rainbowStyle = document.createElement('style');
@@ -835,10 +835,10 @@
             const subtitleElement = document.querySelector('.subtitle');
             
             let timeGreeting = '';
-            if (hour < 6) timeGreeting = '🌙 Night Shift';
-            else if (hour < 12) timeGreeting = '🌅Morning';
-            else if (hour < 18) timeGreeting = '☀️ Afternoon';
-            else timeGreeting = '🌆 Evening';
+            if (hour < 6) timeGreeting = '';
+            else if (hour < 12) timeGreeting = '';
+            else if (hour < 18) timeGreeting = '';
+            else timeGreeting = 'Evening';
             
             subtitleElement.textContent = `${timeGreeting} - Advanced Minecraft Server Administration Dashboard`;
         }
@@ -868,7 +868,7 @@
                     console.log(`  ${button}: ${count} clicks`);
                 });
             } else {
-                console.log('📊 No usage statistics available yet.');
+                console.log('No usage statistics available yet.');
             }
         };
 
@@ -894,12 +894,12 @@
             
             services.forEach((service, index) => {
                 setTimeout(() => {
-                    console.log(`  ✅ ${service.name} (Port ${service.port}): ${service.status}`);
+                    console.log(`   ${service.name} (Port ${service.port}): ${service.status}`);
                 }, index * 500);
             });
             
             setTimeout(() => {
-                console.log('🔌 All services operational!');
+                console.log(' All services operational!');
             }, services.length * 500 + 200);
         };
 
@@ -937,7 +937,7 @@
         window.addEventListener('resize', handleResize);
         handleResize(); // Initial call
 
-        console.log('SpyMC Admin Panel - Fully Initialized! 🎮');
+        console.log('SpyMC Admin Panel - Fully Initialized! ');
         console.log('Responsive design active');
         console.log('Enhanced animations loaded');
         console.log('All interactive features enabled');
