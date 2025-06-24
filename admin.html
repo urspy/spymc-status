@@ -529,7 +529,7 @@
 </head>
 <body>
     <div class="loading" id="loading">
-        <div class="loading-text">⚡ Initializing SpyMC Admin ⚡</div>
+        <div class="loading-text">Initializing SpyMC Admin</div>
         <div class="loading-bar">
             <div class="loading-progress"></div>
         </div>
@@ -560,19 +560,19 @@
 
     <div class="container">
         <div class="header">
-            <h1 class="title">🎮 SpyMC Admin Control Panel 🎮</h1>
+            <h1 class="title">SpyMC Admin Control Panel</h1>
             <p class="subtitle">Advanced Minecraft Server Administration Dashboard</p>
             <div class="status-bar">
                 <div class="status-item">
-                    <span>🟢</span>
+                    <span></span>
                     <span>SERVER ONLINE</span>
                 </div>
                 <div class="status-item">
-                    <span>⚡</span>
+                    <span></span>
                     <span>SYSTEMS ACTIVE</span>
                 </div>
                 <div class="status-item">
-                    <span>🔒</span>
+                    <span></span>
                     <span>SECURE CONNECTION</span>
                 </div>
             </div>
@@ -612,9 +612,9 @@
                 
                 // Show welcome message
                 setTimeout(() => {
-                    console.log('🎮 SpyMC Admin Panel - Fully Loaded! 🎮');
-                    console.log('📊 All systems operational');
-                    console.log('🔐 Secure connection established');
+                    console.log('SpyMC Admin Panel - Fully Loaded! 🎮');
+                    console.log('All systems operational');
+                    console.log('Secure connection established');
                 }, 500);
             }, 3200);
         });
@@ -836,7 +836,7 @@
             
             let timeGreeting = '';
             if (hour < 6) timeGreeting = '🌙 Night Shift';
-            else if (hour < 12) timeGreeting = '🌅 Morning';
+            else if (hour < 12) timeGreeting = '🌅Morning';
             else if (hour < 18) timeGreeting = '☀️ Afternoon';
             else timeGreeting = '🌆 Evening';
             
@@ -851,7 +851,7 @@
             button.addEventListener('click', function() {
                 const buttonName = this.querySelector('.button-text').textContent.split('\n')[0];
                 const timestamp = new Date().toLocaleTimeString();
-                console.log(`📊 Analytics: ${buttonName} accessed at ${timestamp}`);
+                console.log(`nalytics: ${buttonName} accessed at ${timestamp}`);
                 
                 // Store in memory (since we can't use localStorage)
                 if (!window.adminStats) window.adminStats = {};
@@ -863,7 +863,7 @@
         // Show stats command (console)
         window.showStats = function() {
             if (window.adminStats) {
-                console.log('📊 SpyMC Admin Panel Usage Statistics:');
+                console.log('SpyMC Admin Panel Usage Statistics:');
                 Object.entries(window.adminStats).forEach(([button, count]) => {
                     console.log(`  ${button}: ${count} clicks`);
                 });
@@ -906,12 +906,12 @@
         // Clear stats command
         window.clearStats = function() {
             window.adminStats = {};
-            console.log('📊 Usage statistics cleared.');
+            console.log('Usage statistics cleared.');
         };
 
         // Initialize help message
         setTimeout(() => {
-            console.log('💡 Tip: Type help() in console for available commands');
+            console.log('Tip: Type help() in console for available commands');
         }, 4000);
 
         // Responsive design enhancements
@@ -937,11 +937,11 @@
         window.addEventListener('resize', handleResize);
         handleResize(); // Initial call
 
-        console.log('🎮 SpyMC Admin Panel - Fully Initialized! 🎮');
-        console.log('📱 Responsive design active');
-        console.log('🎨 Enhanced animations loaded');
-        console.log('⚡ All interactive features enabled');
-        console.log('🔧 Console commands available - type help()');
+        console.log('SpyMC Admin Panel - Fully Initialized! 🎮');
+        console.log('Responsive design active');
+        console.log('Enhanced animations loaded');
+        console.log('All interactive features enabled');
+        console.log('Console commands available - type help()');
     </script>
 </body>
 </html>
