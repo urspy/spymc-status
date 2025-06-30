@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpyMC - Farewell Masked</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="icon" href="https://i.ibb.co/tMF05rbH/image69.png">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Minecraft&family=Orbitron:wght@500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3a7dff;
+            --primary-dark: #0051cc;
+            --secondary: #00a2ff;
+            --accent: #00c8ff;
+            --dark: #0a0a12;
+            --darker: #050508;
+            --light: #e0e0ff;
+            --card-bg: rgba(15, 15, 25, 0.9);
+            --card-border: rgba(58, 143, 255, 0.2);
+            --text-muted: rgba(200, 220, 255, 0.6);
+            --gold: #ffd700;
+            --dirt: #7A5C34;
+            --stone: #7D7D7D;
+            --diamond: #4AECFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            background-image: 
+                url('https://i.ibb.co/Wv6sRbCX/COREPACK-49.png'),
+                url('https://i.ibb.co/Wv6sRbCX/COREPACK-49.png'),
+                radial-gradient(circle at 20% 30%, rgba(58, 143, 255, 0.05) 0%, transparent 25%);
+            background-size: 100px 100px, 100px 100px, auto;
+            background-blend-mode: overlay;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .minecraft-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 12px solid transparent;
+            border-image: url('https://i.ibb.co/3yKX5yF/minecraft-border.png') 12 round;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .logo {
+            height: 80px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px var(--primary));
+        }
+
+        h1 {
+            font-family: 'Minecraft', 'Orbitron', sans-serif;
+            color: var(--gold);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        }
+
+        h2 {
+            font-family: 'Minecraft', 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin: 20px 0 15px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 20px;
+        }
+
+        .date-info {
+            color: var(--secondary);
+            font-family: 'Minecraft', monospace;
+            font-size: 1rem;
+            margin-bottom: 30px;
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 162, 255, 0.1);
+            border-radius: 8px;
+            display: inline-block;
+            border: 2px solid var(--dirt);
+        }
+
+        .tribute-card {
+            background: var(--card-bg);
+            border: 4px solid var(--dirt);
+            border-radius: 0;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .tribute-card::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 2px solid var(--stone);
+            pointer-events: none;
+        }
+
+        .staff-badge {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: var(--dirt);
+            color: var(--gold);
+            padding: 8px 15px;
+            font-family: 'Minecraft', monospace;
+            font-size: 1rem;
+            transform: rotate(5deg);
+            border: 2px solid var(--gold);
+            box-shadow: 3px 3px 0 #000;
+        }
+
+        .message-box {
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 4px solid var(--diamond);
+            padding: 20px;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .message-box::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid var(--diamond);
+        }
+
+        .signature {
+            font-family: 'Minecraft', monospace;
+            color: var(--diamond);
+            text-align: right;
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .stat-item {
+            background: rgba(122, 92, 52, 0.3);
+            border: 2px solid var(--dirt);
+            padding: 15px;
+            text-align: center;
+            font-family: 'Minecraft', monospace;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            color: var(--gold);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .minecraft-button {
+            display: inline-block;
+            background: var(--dirt);
+            color: white;
+            font-family: 'Minecraft', monospace;
+            padding: 12px 24px;
+            margin: 10px 5px;
+            border: 2px solid #5A3D21;
+            box-shadow: 3px 3px 0 #000;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .minecraft-button:hover {
+            background: #8B6B3D;
+            transform: translateY(-2px);
+            box-shadow: 5px 5px 0 #000;
+        }
+
+        .minecraft-button:active {
+            transform: translateY(2px);
+            box-shadow: 1px 1px 0 #000;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 2px solid var(--dirt);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="minecraft-border"></div>
+            <img src="https://i.ibb.co/tMF05rbH/image69.png" alt="SpyMC" class="logo">
+            <h1>FAREWELL MASKED</h1>
+            <p class="subtitle">Honoring an OG SpyMC Staff Member</p>
+            <div class="date-info">
+                <i class="fas fa-clock"></i> Season 2 • 11:48/30-06-2025
+            </div>
+        </header>
+
+        <div class="tribute-card">
+            <div class="staff-badge">OG STAFF</div>
+            
+            <h2><i class="fas fa-crown"></i> Your Legacy in SpyMC</h2>
+            <p>From the early days of Season 2, you've been an integral part of our community. Your dedication during the toughest phases of server development didn't go unnoticed. Whether it was late-night debugging sessions or calming player disputes, you were there - the silent guardian of SpyMC.</p>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">∞+</div>
+                    <div class="stat-label">Hours of Support</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Dedication</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">S2</div>
+                    <div class="stat-label">Season Champion</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">OG</div>
+                    <div class="stat-label">Original Guardian</div>
+                </div>
+            </div>
+
+            <div class="message-box">
+                <p>"Your presence on the team was valued, and the effort you gave — even during difficult phases — didn't go unnoticed. Granting you 'on leave' last time was out of respect for your dedication, but I understand now that it's time for you to take a full step back."</p>
+                
+                <p>"While it's always tough to see someone with your aura and work ethic leave, I respect your choice. The doors of SpyMC remain open for you — not as a staff anymore, but always as part of the community's history."</p>
+                
+                <div class="signature">
+                    <p>— Senior & The SpyMC Team</p>
+                </div>
+            </div>
+
+            <h2><i class="fas fa-heart"></i> Our Gratitude</h2>
+            <p>For all the times you persevered when others would have quit. For the support you provided during hard times. For being more than just staff - but a cornerstone of our community. Thank you for everything, Masked.</p>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="#" class="minecraft-button"><i class="fas fa-door-open"></i> Doors Always Open</a>
+                <a href="#" class="minecraft-button"><i class="fas fa-history"></i> Your Legacy</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 SpyMC Network | Forever Part of Our History</p>
+            <p>"Don't be a stranger — the team and I will always be glad to see you around, even just as a player."</p>
+        </footer>
+    </div>
+</body>
+</html>
