@@ -49,14 +49,3 @@ Fully autonomous. Publicly transparent.
 | 💬 Discord    | [discord.spymc.xyz](https://discord.spymc.xyz) |
 
 Stay synced. We never sleep.
-
----
-
-## 💼 Partnership Ops
-
-We're locked in with industry-grade providers:
-- [Streamline Servers](https://streamline-servers.com)  
-  🔗 Promo: Use code `SpyMC` for **25% off** new orders  
-  [Discord](https://discord.gg/5xRN9kSP9V) | [Trustpilot](https://au.trustpilot.com/review/streamline-servers.com)
-
-We test them. We trust them.
